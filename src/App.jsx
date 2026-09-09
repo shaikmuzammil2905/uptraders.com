@@ -50,6 +50,18 @@ import { AdminVacationPage } from './pages/admin/AdminVacationPage';
 import { PickupPage } from './pages/PickupPage';
 import { SearchPage } from './pages/SearchPage';
 
+// ─── Trading Dashboard Imports ────────────────────────────────
+import { TradingLayout } from './components/trading/TradingLayout';
+import { TradingProtectedRoute } from './components/trading/TradingProtectedRoute';
+import { TradingLoginPage } from './pages/trading/TradingLoginPage';
+import { TradingDashboardPage } from './pages/trading/TradingDashboardPage';
+import { MarketsPage } from './pages/trading/MarketsPage';
+import { WatchlistPage } from './pages/trading/WatchlistPage';
+import { PortfolioPage } from './pages/trading/PortfolioPage';
+import { OrdersPage } from './pages/trading/OrdersPage';
+import { TransactionsPage } from './pages/trading/TransactionsPage';
+import { TradingProfilePage } from './pages/trading/TradingProfilePage';
+
 function App() {
   const [showSplash, setShowSplash] = useState(true);
   const { fetchData } = useStoreData();
@@ -67,6 +79,22 @@ function App() {
             {/* Auth pages — no layout */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+
+            {/* ─── Trading Dashboard Routes ─── */}
+            <Route path="/trade/login" element={<TradingLoginPage />} />
+            <Route path="/trade/*" element={
+              <TradingProtectedRoute>
+                <TradingLayout />
+              </TradingProtectedRoute>
+            }>
+              <Route path="dashboard" element={<TradingDashboardPage />} />
+              <Route path="markets" element={<MarketsPage />} />
+              <Route path="watchlist" element={<WatchlistPage />} />
+              <Route path="portfolio" element={<PortfolioPage />} />
+              <Route path="orders" element={<OrdersPage />} />
+              <Route path="transactions" element={<TransactionsPage />} />
+              <Route path="profile" element={<TradingProfilePage />} />
+            </Route>
 
                       {/* Delivery Routes */}
           <Route path="/delivery/login" element={<DeliveryLoginPage />} />
