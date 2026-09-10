@@ -113,36 +113,36 @@ function StatsBanner() {
 
   return (
     <div className="animate-section md:px-8 mb-4 md:mb-10">
-      {/* <div
+      <div
         className="relative md:rounded-2xl rounded-[24px] md:overflow-hidden py-10 px-2 md:px-10 mx-4 md:mx-0"
         style={{
-          background: 'linear-gradient(135deg, #D61A3C 0%, #B81633 60%, #D61A3C 100%)',
-          boxShadow: '0 8px 40px rgba(214,26,60,0.35), inset 0 1px 0 rgba(255,255,255,0.15)'
+          background: 'linear-gradient(135deg, #1B7A2B 0%, #0E5B1C 60%, #1B7A2B 100%)',
+          boxShadow: '0 8px 40px rgba(27,122,43,0.35), inset 0 1px 0 rgba(255,255,255,0.15)'
         }}
-      > */}
+      >
         {/* Decorative gold top border */}
-        {/* <div className="hidden md:block absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #D4AF37, transparent)' }} /> */}
+        <div className="hidden md:block absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #D4AF37, transparent)' }} />
         {/* Subtle pattern */}
-        {/* <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #D4AF37 1px, transparent 1px)', backgroundSize: '28px 28px' }} /> */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #D4AF37 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
 
-        {/* <div className="relative z-10"> */}
+        <div className="relative z-10">
           {/* Heading */}
-          {/* <div className="text-center mb-8">
+          <div className="text-center mb-8">
             <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-brand-orange mb-1">Serving Our Community</p>
             <h2 className="font-serif text-xl md:text-2xl font-bold text-white">Trusted by Thousands Every Day</h2>
-          </div> */}
+          </div>
 
           {/* Stats grid */}
-          {/* <div className="grid grid-cols-3 md:grid-cols-6 gap-6 md:gap-4">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-6 md:gap-4">
             {stats.map((s, i) => (
               <StatTile key={i} {...s} />
             ))}
           </div>
-        </div> */}
+        </div>
 
-        {/* Decorative gold bottom border
+        {/* Decorative gold bottom border */}
         <div className="hidden md:block absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #D4AF37, transparent)' }} />
-      </div>  */}
+      </div>
    </div>
   );
 }
@@ -228,7 +228,7 @@ export function HomePage() {
       {/* Mobile Top Section (Yellow bg + Red Banner) */}
       <div className="md:hidden bg-[#FFC107] pt-[140px] pb-12 px-4 relative flex flex-col items-center">
         {banners.length > 0 ? (
-          <div className="relative w-full h-[180px] rounded-[20px] overflow-hidden shadow-xl bg-gradient-to-br from-[#E22E3C] to-[#8C0B14]">
+          <div className="relative w-full h-[180px] rounded-[20px] overflow-hidden shadow-xl bg-gradient-to-br from-[#1B7A2B] to-[#0E5B1C]">
             <div
               className="flex h-full transition-transform duration-700 ease-in-out"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -240,7 +240,7 @@ export function HomePage() {
                       {banner.title}
                     </h2>
                     {(banner.link_url || banner.link_url === '') && (
-                      <Link to={banner.link_url || "/category/all"} className="bg-[#FFC107] text-[#8C0B14] text-[10px] font-extrabold px-5 py-2 rounded-lg w-fit shadow-md">
+                      <Link to={banner.link_url || "/category/all"} className="bg-[#FFC107] text-[#0E5B1C] text-[10px] font-extrabold px-5 py-2 rounded-lg w-fit shadow-md">
                         Shop Now
                       </Link>
                     )}
@@ -264,7 +264,7 @@ export function HomePage() {
             )}
           </div>
         ) : (
-          <div className="relative w-full h-[180px] rounded-[20px] overflow-hidden shadow-xl bg-gradient-to-br from-[#E22E3C] to-[#8C0B14]">
+          <div className="relative w-full h-[180px] rounded-[20px] overflow-hidden shadow-xl bg-gradient-to-br from-[#1B7A2B] to-[#0E5B1C]">
             <div className="absolute inset-0 flex flex-col justify-center px-6 z-10 w-[65%]">
               <h2 className="text-white text-2xl font-serif font-bold leading-tight mb-1.5 drop-shadow-md">
                 Freshness<br />Delivered Daily
@@ -272,7 +272,7 @@ export function HomePage() {
               <p className="text-brand-yellow text-[11px] font-semibold mb-4 opacity-90 tracking-wide">
                 From our store to your door
               </p>
-              <Link to="/category/all" className="bg-[#FFC107] text-[#8C0B14] text-[10px] font-extrabold px-5 py-2 rounded-lg w-fit shadow-md">
+              <Link to="/category/all" className="bg-[#FFC107] text-[#0E5B1C] text-[10px] font-extrabold px-5 py-2 rounded-lg w-fit shadow-md">
                 Shop Now
               </Link>
             </div>

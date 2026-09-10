@@ -43,7 +43,7 @@ function AvatarDropdown({ user, onLogout }) {
     <div ref={ref} className="relative">
       <button onClick={() => setOpen(!open)}
         className="flex items-center gap-1.5 group">
-        <div className="w-8 h-8 rounded-full bg-brand-orange text-gray-900 text-xs font-bold flex items-center justify-center shadow-sm ring-2 ring-orange-200 group-hover:ring-orange-400 transition-all">
+        <div className="w-8 h-8 rounded-full bg-brand-red text-white text-xs font-bold flex items-center justify-center shadow-sm ring-2 ring-green-200 group-hover:ring-green-400 transition-all">
           {initials}
         </div>
         <ChevronDown className={`w-3 h-3 text-gray-500 transition-transform hidden md:block ${open ? 'rotate-180' : ''}`} />
@@ -59,7 +59,7 @@ function AvatarDropdown({ user, onLogout }) {
 
           {items.map(({ icon: Icon, label, path }) => (
             <button key={path} onClick={() => { navigate(path); setOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-brand-orange transition-colors text-left">
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-brand-red transition-colors text-left">
               <Icon className="w-4 h-4 shrink-0" />
               {label}
             </button>
@@ -220,9 +220,9 @@ function DesktopFullHeader({ cartCount, wishlistCount, token, user, handleLogout
               </div>
               {categories && categories.length > 0 && (
                 <div className="absolute top-[100%] left-0 hidden group-hover:block w-52 bg-white rounded-2xl shadow-xl py-2 z-[100] border border-gray-100 mt-1">
-                  <Link to="/category/all" className="block px-4 py-2 text-xs xl:text-sm font-bold text-gray-900 hover:bg-orange-50 hover:text-brand-orange transition-colors">All Categories</Link>
+                  <Link to="/category/all" className="block px-4 py-2 text-xs xl:text-sm font-bold text-gray-900 hover:bg-green-50 hover:text-brand-red transition-colors">All Categories</Link>
                   {categories.map((cat) => (
-                    <Link key={cat.id} to={`/category/${cat.id}`} className="block px-4 py-2 text-xs xl:text-sm text-gray-700 hover:bg-orange-50 hover:text-brand-orange transition-colors">
+                    <Link key={cat.id} to={`/category/${cat.id}`} className="block px-4 py-2 text-xs xl:text-sm text-gray-700 hover:bg-green-50 hover:text-brand-red transition-colors">
                       {cat.name}
                     </Link>
                   ))}
