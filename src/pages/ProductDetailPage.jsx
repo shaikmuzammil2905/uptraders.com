@@ -138,6 +138,11 @@ export function ProductDetailPage() {
     navigate('/cart');
   };
 
+  const handleWhatsAppOrder = () => {
+    const text = encodeURIComponent(`Hello UP Traders, I would like to order:\n- ${product.name} (${selectedSize?.size || 'Standard'})\nPrice: ₹${displayPrice}`);
+    window.open(`https://wa.me/918886000847?text=${text}`, '_blank');
+  };
+
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (!reviewForm.name.trim() || !reviewForm.comment.trim()) return;
@@ -631,13 +636,20 @@ export function ProductDetailPage() {
                   <button
                     onClick={handleBuyNow}
                     disabled={isOutOfStock}
-                    className={`px-8 py-3.5 rounded-2xl font-bold text-base border-2 transition-all ${
+                    className={`px-6 py-3.5 rounded-2xl font-bold text-base border-2 transition-all ${
                       isOutOfStock
                         ? 'border-gray-200 text-gray-300 cursor-not-allowed'
                         : 'border-[#D61A3C] text-[#D61A3C] hover:bg-red-50 active:scale-[0.98]'
                     }`}
                   >
                     Buy Now
+                  </button>
+
+                  <button
+                    onClick={handleWhatsAppOrder}
+                    className="px-6 py-3.5 rounded-2xl font-bold text-base bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg transition-all active:scale-[0.98] flex items-center gap-2"
+                  >
+                    Order via WhatsApp
                   </button>
                 </div>
 
@@ -720,7 +732,7 @@ export function ProductDetailPage() {
                   </div>
                   <div className="py-2 flex justify-between">
                     <span className="text-gray-500 font-medium">Seller</span>
-                    <span className="text-gray-900 font-bold">Manikanta Super Market</span>
+                    <span className="text-gray-900 font-bold">UP Traders — Complete Grocery Store</span>
                   </div>
                 </div>
               </div>

@@ -11,7 +11,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useWishlistStore } from '../store/useWishlistStore';
 import { useStoreData } from '../store/useStoreData';
 import { useLocationStore } from '../store/useLocationStore';
-import logo from '../assets/logo.png';
+import logo from '../assets/up-traders-logo.png';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
 
@@ -191,8 +191,8 @@ function DesktopFullHeader({ cartCount, wishlistCount, token, user, handleLogout
               </Link>
               <div className="flex flex-col text-left mt-1">
                 <Link to="/">
-                  <span className="font-serif font-bold text-xl leading-none tracking-[0.1em] text-brand-red whitespace-nowrap block">Manikanta</span>
-                  <span className="text-gray-600 text-[10px] tracking-[0.2em] mt-1 uppercase font-bold block">SUPER MARKET</span>
+                  <span className="font-serif font-bold text-xl leading-none tracking-[0.05em] text-brand-red whitespace-nowrap block">UP TRADERS</span>
+                  <span className="text-gray-700 text-[9px] tracking-[0.15em] mt-1 uppercase font-bold block">COMPLETE GROCERY STORE</span>
                 </Link>
                 
                 {/* Desktop Deliver To */}
@@ -208,7 +208,7 @@ function DesktopFullHeader({ cartCount, wishlistCount, token, user, handleLogout
 
           {/* Desktop Nav & Search */}
           <div className="flex-1 flex items-center justify-end md:justify-center px-4 lg:px-8 xl:px-12 gap-4 xl:gap-8">
-            <nav className="hidden lg:flex items-center gap-6">
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
               <Link to="/" className="text-sm font-medium text-gray-600 hover:text-brand-red transition-colors">Home</Link>
               <div className="relative group">
                 <div className="flex items-center cursor-pointer py-4">
@@ -229,7 +229,8 @@ function DesktopFullHeader({ cartCount, wishlistCount, token, user, handleLogout
                   </div>
                 )}
               </div>
-              
+              <Link to="/bulk-orders" className="text-sm font-medium text-gray-600 hover:text-brand-red transition-colors">Bulk Orders</Link>
+              <Link to="/function-orders" className="text-sm font-medium text-gray-600 hover:text-brand-red transition-colors">Function Orders</Link>
               <div className="relative group">
                 <div className="flex items-center cursor-pointer py-2 px-1">
                   <span className="text-sm font-medium text-gray-600 group-hover:text-brand-red transition-colors">
@@ -338,6 +339,8 @@ export function Header({ variant = 'default', title, showShare = false }) {
   const navLinks = [
     { label: 'Home', to: '/' },
     { label: 'Categories', to: '#' },
+    { label: 'Bulk Orders', to: '/bulk-orders' },
+    { label: 'Function Orders', to: '/function-orders' },
     { label: 'Offers', to: '#' },
     { label: 'Wishlist', to: '/wishlist' },
     { label: 'About Us', to: '/about' },
@@ -377,12 +380,12 @@ export function Header({ variant = 'default', title, showShare = false }) {
               className="px-5 py-5 flex items-center justify-between border-b border-brand-red/10 bg-white"
             >
               <div className="flex items-center gap-3">
-                <div className="h-14 w-auto shrink-0 flex items-center justify-center">
-                  <img src={logo} alt="Manikanta Super Market" className="h-full w-auto object-contain" />
+                <div className="h-12 w-auto shrink-0 flex items-center justify-center">
+                  <img src={logo} alt="UP Traders" className="h-full w-auto object-contain" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-serif font-bold text-xl leading-none text-brand-red">Manikanta</span>
-                  <span className="text-gray-900 text-[9px] tracking-widest mt-0.5">By S & M</span>
+                  <span className="font-serif font-bold text-lg leading-none text-brand-red">UP TRADERS</span>
+                  <span className="text-gray-900 text-[8px] tracking-wider mt-0.5">COMPLETE GROCERY STORE</span>
                 </div>
               </div>
               <button
@@ -563,8 +566,8 @@ export function Header({ variant = 'default', title, showShare = false }) {
                     <Menu className="w-6 h-6 text-brand-red" strokeWidth={1.5} />
                   </button>
                   <Link to="/" className="flex flex-col text-left">
-                    <span className="font-serif font-bold text-2xl leading-none text-brand-red truncate pr-2">MANIKANTA</span>
-                    <span className="text-brand-red/90 text-[9px] tracking-[0.25em] mt-1.5 uppercase font-bold pl-0.5">SUPER MARKET</span>
+                    <span className="font-serif font-bold text-xl leading-none text-brand-red truncate pr-2">UP TRADERS</span>
+                    <span className="text-brand-red/90 text-[8px] tracking-[0.15em] mt-1 uppercase font-bold pl-0.5">GROCERY STORE</span>
                   </Link>
                 </div>
                 <div className="flex items-center gap-2">
@@ -616,8 +619,8 @@ export function Header({ variant = 'default', title, showShare = false }) {
                   <Menu className="w-6 h-6 text-brand-red" strokeWidth={1.5} />
                 </button>
                 <Link to="/" className="flex flex-col text-left">
-                  <span className="font-serif font-bold text-xl leading-none text-brand-red truncate pr-2">MANIKANTA</span>
-                  <span className="text-brand-red/90 text-[8px] tracking-[0.25em] mt-1 uppercase font-bold pl-0.5">SUPER MARKET</span>
+                  <span className="font-serif font-bold text-lg leading-none text-brand-red truncate pr-2">UP TRADERS</span>
+                  <span className="text-brand-red/90 text-[7.5px] tracking-[0.15em] mt-1 uppercase font-bold pl-0.5">GROCERY STORE</span>
                 </Link>
               </div>
 

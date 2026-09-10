@@ -4,8 +4,8 @@ import { Eye, EyeOff, Mail, Lock, ShieldCheck, Droplet, Feather, ArrowLeft } fro
 import { motion } from 'framer-motion';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuthStore } from '../store/useAuthStore';
-import logoImg from '../assets/logo.png';
-import brandLogo from '../assets/logo.png';
+import logoImg from '../assets/up-traders-logo.png';
+import brandLogo from '../assets/up-traders-logo.png';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000/api';
 
@@ -226,9 +226,9 @@ export function LoginPage() {
           >
             <div className="flex flex-col items-center mb-6">
               <Link to="/">
-                <img src={logoImg} alt="Manikanta Super Market" className="h-14 w-auto drop-shadow-md hover:scale-105 transition-transform" />
+                <img src={logoImg} alt="UP Traders" className="h-14 w-auto drop-shadow-md hover:scale-105 transition-transform" />
               </Link>
-              <h1 className="font-sans font-extrabold tracking-tight text-gray-900 text-sm">Manikanta Super Market</h1>
+              <h1 className="font-sans font-extrabold tracking-tight text-gray-900 text-sm">UP Traders — Complete Grocery Store</h1>
             </div>
             
             {!showForgot && (
@@ -329,9 +329,9 @@ export function LoginPage() {
         >
           <div className="flex flex-col items-center mb-6 mt-2">
             <Link to="/">
-              <img src={brandLogo} alt="Manikanta Super Market" className="h-14 w-auto drop-shadow-md hover:scale-105 transition-transform" />
+              <img src={brandLogo} alt="UP Traders" className="h-14 w-auto drop-shadow-md hover:scale-105 transition-transform" />
             </Link>
-            <h1 className="font-sans font-extrabold tracking-tight text-gray-900 text-sm">Manikanta Super Market</h1>
+            <h1 className="font-sans font-extrabold tracking-tight text-gray-900 text-sm">UP Traders — Complete Grocery Store</h1>
           </div>
           
           {!showForgot && (

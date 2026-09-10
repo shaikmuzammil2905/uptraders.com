@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { LayoutDashboard, ShoppingBag, Package, BarChart3, LogOut, Shield, Users, Menu, X, ImageIcon, Tag, Layers, Truck, Settings, Store, MessageSquare, PalmtreeIcon } from "lucide-react";
-import image from '../../assets/logo.png'
+import image from '../../assets/up-traders-logo.png';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
   { href: "/admin/orders", label: "Orders", icon: <ShoppingBag className="w-4 h-4" /> },
+  { href: "/admin/bulk-orders", label: "Bulk Orders", icon: <Package className="w-4 h-4" /> },
+  { href: "/admin/function-orders", label: "Function Orders", icon: <Package className="w-4 h-4" /> },
   { href: "/admin/pickup-orders", label: "Pickup Orders", icon: <Store className="w-4 h-4" /> },
   { href: "/admin/direct-orders", label: "Direct Orders", icon: <Store className="w-4 h-4" /> },
   { href: "/admin/customers", label: "Customers", icon: <Users className="w-4 h-4" /> },
@@ -36,7 +38,7 @@ export function AdminLayout({ children }) {
     const token = localStorage.getItem("token");
     if (!token) {
       // Mocking admin login for demo purposes based on requirements
-      setAdmin({ name: "Admin User", email: "admin@manikantasupermarket.com" });
+      setAdmin({ name: "Admin User", email: "admin@uptraders.com" });
       return;
     }
 

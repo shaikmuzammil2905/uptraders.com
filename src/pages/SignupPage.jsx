@@ -4,7 +4,7 @@ import { Eye, EyeOff, Mail, Lock, User, ShieldCheck, Store, UserCircle2, ArrowRi
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuthStore } from '../store/useAuthStore';
-import logoImg from '../assets/logo.png';
+import logoImg from '../assets/up-traders-logo.png';
 import { PhoneInput } from '../components/PhoneInput';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000/api';
@@ -598,9 +598,9 @@ export function SignupPage() {
             transition={{ duration: 0.4, ease: 'easeOut' }} className="w-full">
             <div className="flex flex-col items-center mb-5">
               <Link to="/login">
-                <img src={logoImg} alt="Manikanta Super Market" className="h-12 w-auto drop-shadow-md hover:scale-105 transition-transform" />
+                <img src={logoImg} alt="UP Traders" className="h-12 w-auto drop-shadow-md hover:scale-105 transition-transform" />
               </Link>
-              <h1 className="font-extrabold tracking-tight text-gray-900 text-sm mt-1">Manikanta Super Market</h1>
+              <h1 className="font-extrabold tracking-tight text-gray-900 text-sm mt-1">UP Traders — Complete Grocery Store</h1>
             </div>
             {step !== 'done' && <StepBar step={step} />}
             {renderDesktopStep()}
@@ -624,8 +624,8 @@ export function SignupPage() {
               <img src={logoImg} alt="Logo" className="w-8 h-8 object-contain" />
             </div>
             <div>
-              <p className="text-white font-extrabold text-sm leading-tight">Manikanta</p>
-              <p className="text-white/70 text-[10px] font-medium">Super Market</p>
+              <p className="text-white font-extrabold text-sm leading-tight">UP Traders</p>
+              <p className="text-white/70 text-[10px] font-medium">Complete Grocery Store</p>
             </div>
           </div>
 

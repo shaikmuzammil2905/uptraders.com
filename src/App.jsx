@@ -50,6 +50,11 @@ import { AdminVacationPage } from './pages/admin/AdminVacationPage';
 import { PickupPage } from './pages/PickupPage';
 import { SearchPage } from './pages/SearchPage';
 
+import { BulkOrdersPage } from './pages/BulkOrdersPage';
+import { FunctionOrdersPage } from './pages/FunctionOrdersPage';
+import { AdminBulkOrdersPage } from './pages/admin/AdminBulkOrdersPage';
+import { AdminFunctionOrdersPage } from './pages/admin/AdminFunctionOrdersPage';
+
 // ─── Trading Dashboard Imports ────────────────────────────────
 import { TradingLayout } from './components/trading/TradingLayout';
 import { TradingProtectedRoute } from './components/trading/TradingProtectedRoute';
@@ -106,6 +111,8 @@ function App() {
                 <Routes>
                   <Route path="/" element={<AdminDashboardPage />} />
                   <Route path="/orders" element={<AdminOrdersPage />} />
+                  <Route path="bulk-orders" element={<AdminBulkOrdersPage />} />
+                  <Route path="function-orders" element={<AdminFunctionOrdersPage />} />
                   <Route path="customers" element={<AdminCustomersPage />} />
                   <Route path="products" element={<AdminProductsPage />} />
                   <Route path="categories" element={<AdminCategoriesPage />} />
@@ -132,6 +139,8 @@ function App() {
                   {/* Public Pages (no login required) */}
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/bulk-orders" element={<BulkOrdersPage />} />
+                  <Route path="/function-orders" element={<FunctionOrdersPage />} />
                   <Route path="/category/:categoryId" element={<CategoryListingPage />} />
                   <Route path="/offer/:id" element={<OfferPage />} />
                   <Route path="/product/:id" element={<ProductDetailPage />} />

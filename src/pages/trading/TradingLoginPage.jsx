@@ -173,7 +173,7 @@ export function TradingLoginPage() {
         {/* Back to store */}
         <div className="text-center mt-4">
           <Link to="/" className="text-white/30 hover:text-white/60 text-xs transition-colors">
-            ← Back to Manikanta Super Market
+            ← Back to UP Traders Store
           </Link>
         </div>
       </motion.div>

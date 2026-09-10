@@ -7,7 +7,7 @@ import {
   ShoppingCart,
 } from 'lucide-react';
 import { Header } from '../components/Header';
-import logo from '../assets/logo.png';
+import logo from '../assets/up-traders-logo.png';
 
 const HERO_IMAGE =
   'https://images.pexels.com/photos/18764913/pexels-photo-18764913.jpeg?auto=compress&cs=tinysrgb&w=1200&q=80';
@@ -25,7 +25,7 @@ const ABOUT_STEPS = [
     label: '02 / THE RHYTHM',
     title: 'Stocked fresh daily',
     description:
-      'Our team keeps produce, dairy, bakery, and pantry shelves ready for the day ahead.',
+      'Our team keeps produce, dairy, bakery, bulk orders, and pantry shelves ready for the day ahead.',
   },
   {
     id: 'handoff',
@@ -203,14 +203,14 @@ export function AboutPage() {
               <div className="mx-auto flex h-[68px] w-[68px] items-center justify-center rounded-[22px] border border-white/70 bg-white/90 p-2 shadow-lg backdrop-blur-xs">
                 <img
                   src={logo}
-                  alt="Manikanta Super Market logo"
+                  alt="UP Traders logo"
                   className="h-full w-full object-contain"
                   decoding="async"
                   loading="eager"
                 />
               </div>
               <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.22em] text-white drop-shadow-sm">
-                Manikanta Super Market
+                UP Traders — Complete Grocery Store
               </p>
             </div>
 
@@ -225,7 +225,7 @@ export function AboutPage() {
                 A familiar market, made for your everyday.
               </h1>
               <p className="mt-3 max-w-[690px] text-[13px] leading-[1.65] text-brand-maroon/80 md:text-base">
-                Manikanta Super Market is here for the moments between the big plans: a quick top-up, a fresh dinner, and the ingredients that make home feel like home.
+                UP Traders is here for all your grocery needs, daily essentials, bulk supply requirements, and marriage or function order catering. Quality and savings delivered every day.
               </p>
               <a
                 href="#aisles"

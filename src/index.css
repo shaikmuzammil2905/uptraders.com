@@ -2,8 +2,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-red: #D61A3C;
-  --color-brand-red-dark: #B81633;
+  --color-brand-red: #1E8233;
+  --color-brand-red-dark: #156323;
+  --color-brand-green: #1E8233;
+  --color-brand-green-dark: #156323;
   --color-brand-yellow: #FFC107;
   --color-brand-orange: #FF9800;
   --color-brand-bg: #F9FAFB;
@@ -17,7 +19,6 @@
   --color-brand-beige-darker: #F4EBE0;
   --color-brand-cream: #FDFBF7;
   --color-brand-cream-light: #FFFFFF;
-  --color-brand-green: #3B5F4A;
 
   /* Admin / Snakzee theme */
   --color-terracotta: #C8401A;

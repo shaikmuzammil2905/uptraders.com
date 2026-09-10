@@ -70,7 +70,7 @@ const updateStatus = async (orderId, status) => {
       `Hi ${order.user_name || address.name || 'Customer'}! Your order #${order.order_number || order.id} status is now: *${order.status}*.\n\n` +
       (order.status === 'ready for pickup'
         ? `Your order is ready for pickup at *Aspari main road opposite APGB Bank, 518347*. Please come pick it up at your convenience! 🏪`
-        : `Thank you for shopping with Manikanta Super Market! 🙏`)
+        : `Thank you for shopping with UP Traders! 🙏`)
     );
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   };

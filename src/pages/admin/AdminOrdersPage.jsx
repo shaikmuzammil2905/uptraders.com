@@ -6,7 +6,7 @@ import logoUrl from '../../assets/logo.png';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
 const FROM_ADDRESS = {
-  name: "Manikanta Super Market",
+  name: "UP Traders",
   line1: "1-1-738, Vinayaka temple road",
   city: "Koratla",
   state: "Telangana",
@@ -930,7 +930,7 @@ const updateStatus = async (orderId, status) => {
 <table style="width:100%;border-collapse:collapse;border-bottom:3px solid #08183A;padding-bottom:16px;margin-bottom:20px;">
   <tr>
     <td style="vertical-align:middle;width:50%;">
-      <img src="${new URL(logoUrl, window.location.href).href}" style="height:64px;width:auto;object-fit:contain;" alt="Manikanta Super Market" />
+      <img src="${new URL(logoUrl, window.location.href).href}" style="height:64px;width:auto;object-fit:contain;" alt="UP Traders" />
     </td>
     <td style="vertical-align:top;text-align:right;">
       <div style="font-size:20pt;font-weight:900;color:#08183A;letter-spacing:-0.5px;">INVOICE</div>
@@ -950,10 +950,10 @@ const updateStatus = async (orderId, status) => {
     <td style="width:${isPickup ? '100%' : '50%'};vertical-align:top;padding:12px;border:1px solid #e8d5b0;background:#FFFDFD;border-radius:4px;">
       <div style="font-size:9pt;font-weight:700;color:#08183A;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e8d5b0;padding-bottom:5px;margin-bottom:8px;">From</div>
       <div style="font-size:9.5pt;color:#555;line-height:1.6;">
-        <strong style="color:#08183A;">Manikanta Super Market</strong><br>
-        Hyderabad, Telangana 500001<br>
-        Phone: +91 98660 48155<br>
-        Email: mani.worriers@gmail.com
+        <strong style="color:#08183A;">UP Traders — Complete Grocery Store</strong><br>
+        Aspari main road opposite APGB Bank, 518347<br>
+        Phone: +91 98660 48155, +91 93902 68250<br>
+        Email: uptraders.official@gmail.com
       </div>
     </td>
     ${!isPickup ? `
@@ -1002,7 +1002,7 @@ const updateStatus = async (orderId, status) => {
 </table>
 
 <div style="margin-top:30px;padding-top:12px;border-top:1px solid #e8d5b0;text-align:center;font-size:8.5pt;color:#999;">
-  Thank you for shopping with Manikanta Super Market! &nbsp;|&nbsp; mani.worriers@gmail.com &nbsp;|&nbsp; +91 98660 48155
+  Thank you for shopping with UP Traders! &nbsp;|&nbsp; mani.worriers@gmail.com &nbsp;|&nbsp; +91 98660 48155
 </div>
 
 <div class="print-btn">
@@ -1035,7 +1035,7 @@ const updateStatus = async (orderId, status) => {
       `Hi ${order.user_name || address.name || 'Customer'}! 🙏 Please find your *Invoice* for Order *#${order.order_number || order.id}* below:\n\n` +
       `*Items:*\n${itemsText}\n\n` +
       `*Total: ₹${order.total}*\n\n` +
-      `Thank you for shopping with Manikanta Super Market!`
+      `Thank you for shopping with UP Traders!`
     );
     window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
   };
@@ -1081,7 +1081,7 @@ const updateStatus = async (orderId, status) => {
 <body>
 <div class="box">
   <div class="hdr">
-    <div class="brand">Manikanta Super Market</div>
+    <div class="brand">UP Traders</div>
     <div class="oid">#${order.order_number || order.id}</div>
   </div>
   <div class="sec">

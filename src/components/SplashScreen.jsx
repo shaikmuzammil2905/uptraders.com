@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import logoImg from '../assets/logo.png';
+import logoImg from '../assets/up-traders-logo.png';
 import splashBg from '../assets/splash_bg.png';
 
 export function SplashScreen({ onComplete }) {
@@ -63,7 +63,7 @@ export function SplashScreen({ onComplete }) {
           {/* Logo */}
           <img
             src={logoImg}
-            alt="Manikanta Super Market Logo"
+            alt="UP Traders Logo"
             className="object-contain mb-3"
             style={{
               width: '140px',
@@ -76,7 +76,7 @@ export function SplashScreen({ onComplete }) {
           {/* Brand Name */}
           <span
             style={{
-              color: '#C8102E',
+              color: '#1E8233',
               fontFamily: "'Georgia', serif",
               fontSize: 'clamp(28px, 9vw, 44px)',
               fontWeight: '900',
@@ -85,19 +85,19 @@ export function SplashScreen({ onComplete }) {
               textShadow: '0 2px 8px rgba(0,0,0,0.10)'
             }}
           >
-            MANIKANTA
+            UP TRADERS
           </span>
           <span
             style={{
-              color: '#C8102E',
+              color: '#1E8233',
               fontFamily: "'Georgia', serif",
-              fontSize: 'clamp(16px, 5vw, 22px)',
+              fontSize: 'clamp(14px, 4vw, 18px)',
               fontWeight: '700',
-              letterSpacing: '0.20em',
+              letterSpacing: '0.15em',
               textShadow: '0 1px 4px rgba(0,0,0,0.08)'
             }}
           >
-            SUPER MARKET
+            COMPLETE GROCERY STORE
           </span>
         </div>
 

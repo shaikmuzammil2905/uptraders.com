@@ -345,7 +345,7 @@ export function PickupPage() {
                     </div>
                     <div className="mt-4 p-4 bg-white border border-brand-dark-blue/10 rounded-xl">
                       <p className="text-sm text-gray-900 font-bold flex items-center gap-2"><Store className="w-4 h-4 text-brand-red"/> Pickup Location</p>
-                      <p className="text-xs text-gray-900/80 mt-1">Manikanta Super Market Store, Main Market, City Center</p>
+                      <p className="text-xs text-gray-900/80 mt-1">UP Traders Store, Aspari main road opposite APGB Bank, 518347</p>
                     </div>
                   </div>
                 </div>

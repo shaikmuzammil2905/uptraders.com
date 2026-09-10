@@ -90,6 +90,12 @@ export function CartPage() {
     navigate('/checkout', { state: { couponCode, orderType: type } });
   };
 
+  const handleWhatsAppCart = () => {
+    const itemSummary = items.map(i => `- ${i.product.name} (${i.variant?.size || 'Standard'}) x ${i.qty} = ₹${(Number(i.variant?.price || i.product.price) * i.qty).toFixed(0)}`).join('\n');
+    const text = encodeURIComponent(`Hello UP Traders, I would like to order the following items from my cart:\n\n${itemSummary}\n\nTotal Payable: ₹${grandTotal.toFixed(0)}`);
+    window.open(`https://wa.me/918886000847?text=${text}`, '_blank');
+  };
+
   const subtotal = getSubtotal();
   const grandTotal = getTotal();
   const discount = getDiscount();
@@ -334,15 +340,21 @@ export function CartPage() {
               </div>
 
               {/* Desktop Checkout Button */}
-              <div className="hidden md:block mt-8">
+              <div className="hidden md:block mt-8 space-y-3">
                 <button
                   onClick={handleCheckout}
                   className="w-full bg-[#D61A3C] hover:bg-[#b51430] text-white font-bold py-4 rounded-2xl shadow-lg shadow-[#D61A3C]/30 text-lg active:scale-95 transition-all"
                 >
                   Proceed to Checkout
                 </button>
+                <button
+                  onClick={handleWhatsAppCart}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-md text-base transition-all flex items-center justify-center gap-2"
+                >
+                  Order Cart via WhatsApp
+                </button>
                 <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
-                  Secure checkout powered by Manikanta
+                  Secure checkout powered by UP Traders
                 </p>
               </div>
             </div>
