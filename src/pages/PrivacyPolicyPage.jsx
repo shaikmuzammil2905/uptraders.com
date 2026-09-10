@@ -1,6 +1,5 @@
 import React from 'react';
 import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import { Link } from 'react-router-dom';
 
 export function PrivacyPolicyPage() {
@@ -476,7 +475,6 @@ export function PrivacyPolicyPage() {
           <p>This Privacy Policy does not replace the UP Traders <Link to="/terms-of-service" className="text-brand-red underline font-semibold">Terms & Conditions</Link>.</p>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

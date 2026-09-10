@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import { PackageCheck, Phone, Send, ShieldCheck, Truck, CheckCircle } from 'lucide-react';
 
 const WHATSAPP_NUMBER = "918886000847";
@@ -264,11 +263,8 @@ export function BulkOrdersPage() {
               </ul>
             </div>
           </div>
-
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

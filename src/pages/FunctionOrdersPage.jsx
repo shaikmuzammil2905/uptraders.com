@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import { Calendar, CheckCircle, HeartHandshake, PartyPopper, Phone, Send, Sparkles, Utensils } from 'lucide-react';
 
 const WHATSAPP_NUMBER = "918886000847";
@@ -273,16 +272,10 @@ export function FunctionOrdersPage() {
               <p className="text-xs text-amber-100 leading-relaxed mb-3">
                 We have over a decade of trust supplying marriages across the region with uncompromised quality rice, pure ghee, premium dry fruits, fresh pulses, and cooking oils.
               </p>
-              <div className="text-xs font-bold text-amber-300">
-                📍 Store: Aspari Main Road opposite APGB Bank, 518347
-              </div>
             </div>
           </div>
-
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }
