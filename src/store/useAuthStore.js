@@ -2,9 +2,12 @@ import { create } from 'zustand';
 import api from '../utils/api';
 import { useCartStore } from './useCartStore';
 import { useWishlistStore } from './useWishlistStore';
+import { DEMO_CREDENTIALS } from '../data/demoUser';
 
 // Decode JWT and check expiry without any library
 function isTokenExpired(token) {
+  // Demo tokens never expire
+  if (token && token.startsWith('demo-token-')) return false;
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload.exp * 1000 < Date.now();
@@ -74,6 +77,25 @@ export const useAuthStore = create((set, get) => ({
 
   login: async (email, password) => {
     set({ loading: true, error: null });
+
+    // Demo credentials fallback — works without backend
+    if (
+      email.trim().toLowerCase() === DEMO_CREDENTIALS.email.toLowerCase() &&
+      password === DEMO_CREDENTIALS.password
+    ) {
+      const demoToken = 'demo-token-' + Date.now();
+      const demoUserData = {
+        id: 'demo-001',
+        name: 'Demo User',
+        email: DEMO_CREDENTIALS.email,
+        phone: '+91 98765 43210',
+        role: 'customer',
+      };
+      localStorage.setItem('token', demoToken);
+      set({ token: demoToken, user: demoUserData, loading: false });
+      return { success: true, role: 'customer' };
+    }
+
     try {
       const { data } = await api.post('/auth/login', { email, password });
       localStorage.setItem('token', data.token);
@@ -106,6 +128,23 @@ export const useAuthStore = create((set, get) => ({
     if (isTokenExpired(get().token)) {
       localStorage.removeItem('token');
       set({ user: null, token: null, addresses: [], orders: [] });
+      return;
+    }
+    // Demo session — no backend call needed
+    if (get().token.startsWith('demo-token-')) {
+      if (!get().user) {
+        set({
+          user: {
+            id: 'demo-001',
+            name: 'Demo User',
+            email: DEMO_CREDENTIALS.email,
+            phone: '+91 98765 43210',
+            role: 'customer',
+          },
+          addresses: [],
+          orders: [],
+        });
+      }
       return;
     }
     set({ loading: true });
