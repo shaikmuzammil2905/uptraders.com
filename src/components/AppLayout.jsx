@@ -18,7 +18,7 @@ export function AppLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center w-full">
-      <div className="w-full md:max-w-full max-w-5xl mx-auto bg-white relative shadow-sm min-h-screen flex flex-col overflow-x-hidden">
+      <div className="w-full max-w-[1920px] mx-auto bg-white relative shadow-sm min-h-screen flex flex-col overflow-x-hidden">
         <Toast />
         
         {/* Main Content Area */}

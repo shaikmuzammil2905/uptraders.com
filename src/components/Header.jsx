@@ -115,7 +115,7 @@ function DesktopSearchBar() {
   };
 
   return (
-    <div ref={ref} className="relative w-[280px] xl:w-[320px]">
+    <div ref={ref} className="relative w-[180px] lg:w-[220px] xl:w-[280px] shrink-0">
       <Search className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
       <input
         type="text"
@@ -181,107 +181,126 @@ function DesktopFullHeader({ cartCount, wishlistCount, token, user, handleLogout
         </div>
       )}
       <div className="h-[76px] hidden md:block" />
-      <header className={`fixed ${announcement && announcement.is_active && announcement.items?.some(i => i.text) ? 'top-[32px]' : 'top-0'} left-0 z-50 w-full bg-[#FFC107] px-4 md:px-12 lg:px-20 py-3 shadow-md border-b border-brand-yellow hidden md:block transition-all`}>
-        <div className="w-full mx-auto flex items-center justify-between">
+      <header className={`fixed ${announcement && announcement.is_active && announcement.items?.some(i => i.text) ? 'top-[32px]' : 'top-0'} left-0 z-50 w-full bg-[#FFC107] px-3 md:px-6 lg:px-10 py-2.5 shadow-md border-b border-brand-yellow hidden md:block transition-all`}>
+        <div className="w-full max-w-[1920px] mx-auto flex items-center justify-between gap-3 lg:gap-6">
 
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 hover:opacity-95 transition-opacity">
-              <Link to="/" className="h-14 w-auto shrink-0 flex items-center justify-center">
-                <img src={logo} alt="Icon" className="h-full w-auto object-contain" />
-              </Link>
-              <div className="flex flex-col text-left mt-1">
-                <Link to="/">
-                  <span className="font-serif font-bold text-xl leading-none tracking-[0.05em] text-brand-red whitespace-nowrap block">UP TRADERS</span>
-                  <span className="text-gray-700 text-[9px] tracking-[0.15em] mt-1 uppercase font-bold block">COMPLETE GROCERY STORE</span>
-                </Link>
-                
-                {/* Desktop Deliver To */}
-                <div className="hidden lg:flex items-center gap-1 cursor-pointer hover:bg-black/5 rounded transition-colors mt-1 py-0.5 -ml-1 pl-1 w-fit" onClick={fetchLocation}>
-                  <MapPin className="w-3 h-3 text-gray-800 shrink-0" />
-                  <span className="text-gray-800 text-[10px] font-semibold whitespace-nowrap">Deliver to:</span>
-                  <span className="text-gray-900 text-[11px] font-bold max-w-[130px] truncate">{isLoadingLocation ? 'Fetching...' : locationName}</span>
-                  <ChevronDown className="w-3 h-3 text-gray-900 shrink-0" />
-                </div>
+          {/* Left: Logo & Location */}
+          <div className="flex items-center gap-3 shrink-0">
+            <Link to="/" className="flex items-center gap-2.5 hover:opacity-95 transition-opacity">
+              <img src={logo} alt="UP Traders" className="h-11 md:h-12 w-auto object-contain shrink-0" />
+              <div className="flex flex-col text-left">
+                <span className="font-serif font-bold text-lg lg:text-xl leading-none tracking-[0.04em] text-brand-red whitespace-nowrap block">UP TRADERS</span>
+                <span className="text-gray-800 text-[8px] lg:text-[8.5px] tracking-[0.12em] mt-0.5 uppercase font-bold block whitespace-nowrap">COMPLETE GROCERY STORE</span>
               </div>
+            </Link>
+
+            {/* Desktop Deliver To */}
+            <div className="hidden xl:flex items-center gap-1 cursor-pointer hover:bg-black/5 rounded-lg transition-colors py-1 px-2 border border-black/10 ml-1" onClick={fetchLocation}>
+              <MapPin className="w-3.5 h-3.5 text-gray-800 shrink-0" />
+              <div className="flex flex-col text-left">
+                <span className="text-gray-800 text-[9px] font-semibold leading-none">Deliver to:</span>
+                <span className="text-gray-900 text-[10.5px] font-bold max-w-[100px] truncate leading-tight">{isLoadingLocation ? 'Fetching...' : locationName}</span>
+              </div>
+              <ChevronDown className="w-3 h-3 text-gray-900 shrink-0 ml-0.5" />
             </div>
           </div>
 
-          {/* Desktop Nav & Search */}
-          <div className="flex-1 flex items-center justify-end md:justify-center px-4 lg:px-8 xl:px-12 gap-4 xl:gap-8">
-            <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
-              <Link to="/" className="text-sm font-medium text-gray-600 hover:text-brand-red transition-colors">Home</Link>
-              <div className="relative group">
-                <div className="flex items-center cursor-pointer py-4">
-                  <span className="text-sm font-medium text-gray-600 group-hover:text-brand-red transition-colors">
-                    Categories
-                  </span>
-                  <ChevronDown className="w-4 h-4 ml-1 text-gray-600 group-hover:text-brand-red transition-transform group-hover:-rotate-180" />
-                </div>
-                {categories && categories.length > 0 && (
-                  <div className="absolute top-[100%] left-0 hidden group-hover:block w-48 bg-white rounded-xl shadow-xl py-2 z-[100] border border-gray-100 mt-[-8px]">
-                    <div className="w-full h-2 bg-transparent absolute -top-2 left-0" />
-                    <Link to="/category/all" className="block px-4 py-2.5 text-sm font-medium text-gray-900 hover:bg-orange-50 hover:text-brand-orange transition-colors">All Categories</Link>
-                    {categories.map((cat) => (
-                      <Link key={cat.id} to={`/category/${cat.id}`} className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-brand-orange transition-colors">
-                        {cat.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+          {/* Center: Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-2 xl:gap-4 shrink-0">
+            <Link to="/" className="text-xs xl:text-sm font-semibold text-gray-800 hover:text-brand-red transition-colors whitespace-nowrap px-2 py-1.5 rounded-lg hover:bg-white/40">
+              Home
+            </Link>
+            
+            <div className="relative group">
+              <div className="flex items-center cursor-pointer px-2 py-1.5 rounded-lg hover:bg-white/40">
+                <span className="text-xs xl:text-sm font-semibold text-gray-800 group-hover:text-brand-red transition-colors whitespace-nowrap">
+                  Categories
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 ml-1 text-gray-700 group-hover:text-brand-red transition-transform group-hover:-rotate-180" />
               </div>
-              <Link to="/bulk-orders" className="text-sm font-medium text-gray-600 hover:text-brand-red transition-colors">Bulk Orders</Link>
-              <Link to="/function-orders" className="text-sm font-medium text-gray-600 hover:text-brand-red transition-colors">Function Orders</Link>
-              <div className="relative group">
-                <div className="flex items-center cursor-pointer py-2 px-1">
-                  <span className="text-sm font-medium text-gray-600 group-hover:text-brand-red transition-colors">
-                    Sale
-                  </span>
-                  <ChevronDown className="w-4 h-4 ml-1 text-gray-600 group-hover:text-brand-red transition-transform group-hover:-rotate-180" />
+              {categories && categories.length > 0 && (
+                <div className="absolute top-[100%] left-0 hidden group-hover:block w-52 bg-white rounded-2xl shadow-xl py-2 z-[100] border border-gray-100 mt-1">
+                  <Link to="/category/all" className="block px-4 py-2 text-xs xl:text-sm font-bold text-gray-900 hover:bg-orange-50 hover:text-brand-orange transition-colors">All Categories</Link>
+                  {categories.map((cat) => (
+                    <Link key={cat.id} to={`/category/${cat.id}`} className="block px-4 py-2 text-xs xl:text-sm text-gray-700 hover:bg-orange-50 hover:text-brand-orange transition-colors">
+                      {cat.name}
+                    </Link>
+                  ))}
                 </div>
-                {offers && offers.length > 0 && (
-                  <div className="absolute top-[100%] left-0 hidden group-hover:block w-56 bg-white rounded-xl shadow-xl py-2 z-[100] border border-gray-100 mt-[-8px]">
-                    <div className="w-full h-2 bg-transparent absolute -top-2 left-0" />
-                    {offers.map((offer) => (
-                      <Link key={offer.id} to={`/offer/${offer.id}`} className="flex justify-between items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-brand-orange transition-colors">
-                        <span>{offer.title}</span>
-                        <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">{parseFloat(offer.discount_percentage)}% OFF</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <Link to="/wishlist" className="text-sm font-medium text-gray-600 hover:text-brand-red transition-colors">Wishlist</Link>
-              <Link to="/about" className="text-sm font-medium text-gray-600 hover:text-brand-red transition-colors">About</Link>
-              <Link to="/contact" className="text-sm font-medium text-gray-600 hover:text-brand-red transition-colors">Contact</Link>
-            </nav>
-            <DesktopSearchBar />
-          </div>
+              )}
+            </div>
 
-          <div className="flex items-center gap-3">
-            <Link to="/wishlist" className="relative p-1 cursor-pointer hover:-translate-y-0.5 transition-transform">
-              <Heart className="w-5 h-5 text-gray-900" strokeWidth={1.5} />
+            <Link to="/bulk-orders" className="text-xs xl:text-sm font-semibold text-gray-800 hover:text-brand-red transition-colors whitespace-nowrap px-2 py-1.5 rounded-lg hover:bg-white/40">
+              Bulk Orders
+            </Link>
+
+            <Link to="/function-orders" className="text-xs xl:text-sm font-semibold text-gray-800 hover:text-brand-red transition-colors whitespace-nowrap px-2 py-1.5 rounded-lg hover:bg-white/40">
+              Function Orders
+            </Link>
+
+            <div className="relative group">
+              <div className="flex items-center cursor-pointer px-2 py-1.5 rounded-lg hover:bg-white/40">
+                <span className="text-xs xl:text-sm font-semibold text-gray-800 group-hover:text-brand-red transition-colors whitespace-nowrap">
+                  Sale
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 ml-1 text-gray-700 group-hover:text-brand-red transition-transform group-hover:-rotate-180" />
+              </div>
+              {offers && offers.length > 0 && (
+                <div className="absolute top-[100%] left-0 hidden group-hover:block w-56 bg-white rounded-2xl shadow-xl py-2 z-[100] border border-gray-100 mt-1">
+                  {offers.map((offer) => (
+                    <Link key={offer.id} to={`/offer/${offer.id}`} className="flex justify-between items-center px-4 py-2 text-xs xl:text-sm text-gray-700 hover:bg-orange-50 hover:text-brand-orange transition-colors">
+                      <span>{offer.title}</span>
+                      <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">{parseFloat(offer.discount_percentage)}% OFF</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Link to="/wishlist" className="text-xs xl:text-sm font-semibold text-gray-800 hover:text-brand-red transition-colors whitespace-nowrap px-2 py-1.5 rounded-lg hover:bg-white/40">
+              Wishlist
+            </Link>
+
+            <Link to="/about" className="text-xs xl:text-sm font-semibold text-gray-800 hover:text-brand-red transition-colors whitespace-nowrap px-2 py-1.5 rounded-lg hover:bg-white/40">
+              About
+            </Link>
+
+            <Link to="/contact" className="text-xs xl:text-sm font-semibold text-gray-800 hover:text-brand-red transition-colors whitespace-nowrap px-2 py-1.5 rounded-lg hover:bg-white/40">
+              Contact
+            </Link>
+          </nav>
+
+          {/* Right: Search & Cart & Auth */}
+          <div className="flex items-center gap-2 xl:gap-3 shrink-0">
+            <DesktopSearchBar />
+
+            <Link to="/wishlist" className="relative p-2 cursor-pointer hover:bg-white/30 rounded-full transition-colors">
+              <Heart className="w-5 h-5 text-gray-900" strokeWidth={1.75} />
               {wishlistCount > 0 && (
-                <span className="absolute top-0 right-0 bg-brand-red text-gray-900 text-gray-900 text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-brand-dark-blue">
+                <span className="absolute top-0 right-0 bg-brand-red text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-white">
                   {wishlistCount}
                 </span>
               )}
             </Link>
-            <Link to="/cart" className="relative p-1 cursor-pointer hover:-translate-y-0.5 transition-transform">
-              <ShoppingCart className="w-5 h-5 text-gray-900" strokeWidth={1.5} />
+
+            <Link to="/cart" className="relative p-2 cursor-pointer hover:bg-white/30 rounded-full transition-colors">
+              <ShoppingCart className="w-5 h-5 text-gray-900" strokeWidth={1.75} />
               {cartCount > 0 && (
-                <span className="absolute top-0 right-0 bg-brand-red text-gray-900 text-gray-900 text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-brand-dark-blue">
+                <span className="absolute top-0 right-0 bg-brand-red text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-white">
                   {cartCount}
                 </span>
               )}
             </Link>
+
             {token ? (
               <AvatarDropdown user={user} onLogout={handleLogout} />
             ) : (
-              <Link to="/login" className="flex items-center gap-1.5 text-xs font-bold text-gray-900 bg-brand-red text-gray-900 px-4 py-2 rounded-lg hover:bg-brand-red text-gray-900/80 transition-colors ml-2">
+              <Link to="/login" className="flex items-center gap-1.5 text-xs font-bold text-white bg-brand-red px-3.5 py-2 rounded-xl hover:bg-brand-red/90 transition-all shadow-sm shrink-0">
                 <LogIn className="w-3.5 h-3.5" /> Login
               </Link>
             )}
           </div>
+
         </div>
       </header>
     </>

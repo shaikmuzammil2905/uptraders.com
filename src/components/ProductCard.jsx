@@ -268,7 +268,7 @@ export function ProductCard({ product, layout = 'grid', searchQuery = '' }) {
             aria-label={`Add ${productName} to cart`}
             title="Add to cart"
             onClick={handleAddToCart}
-            className="absolute bottom-3 right-3 flex h-9 px-4 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#D81B24] to-[#ff474f] text-[13px] font-semibold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white active:scale-95 motion-reduce:transition-none"
+            className="absolute bottom-3 right-3 flex h-9 px-4 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#1B7A2B] to-[#259e38] text-[13px] font-semibold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white active:scale-95 motion-reduce:transition-none"
           >
             <ShoppingCart className="h-4 w-4" />
             <span>Add</span>
@@ -375,7 +375,7 @@ export function ProductCard({ product, layout = 'grid', searchQuery = '' }) {
               aria-label={`Add ${productName} to cart`}
               title="Add to cart"
               onClick={handleAddToCart}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#D81B24] to-[#ff474f] py-2 text-sm font-semibold text-white shadow-md transition-all hover:scale-[1.02] hover:shadow-lg active:scale-95"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1B7A2B] to-[#259e38] py-2 text-sm font-semibold text-white shadow-md transition-all hover:scale-[1.02] hover:shadow-lg active:scale-95"
             >
               <ShoppingCart className="h-4 w-4" />
               <span>Add to Cart</span>
