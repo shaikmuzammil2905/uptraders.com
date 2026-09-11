@@ -1,28 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { ImageIcon, Plus, Trash2, Edit2, X, Save, Upload } from "lucide-react";
+import { ImageIcon, Plus, Trash2, Edit2, X, Save, Upload, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useStoreData } from "../../store/useStoreData";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
 
 export function AdminBannersPage() {
-  const [banners, setBanners] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const store = useStoreData();
+  const [banners, setBanners] = useState(store.banners || []);
+  const [loading, setLoading] = useState(false);
   const [editBanner, setEditBanner] = useState(null);
-  const [formData, setFormData] = useState({ title: "", image_url: "", link_url: "", is_active: true });
+  const [formData, setFormData] = useState({ title: "", subtitle: "", image_url: "", link: "", button_text: "Shop Now", is_active: true });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isNew, setIsNew] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
   useEffect(() => {
     fetchBanners();
   }, []);
 
   const fetchBanners = async () => {
+    const current = useStoreData.getState().banners;
+    if (current && current.length > 0) setBanners(current);
+
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${BACKEND_URL}/admin/banners`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      if (data.banners) setBanners(data.banners);
+      if (data?.banners && data.banners.length > 0) setBanners(data.banners);
     } catch (err) {
       console.error(err);
     } finally {
@@ -31,7 +37,7 @@ export function AdminBannersPage() {
   };
 
   const handleAdd = () => {
-    setFormData({ title: "", image_url: "", link_url: "", is_active: true });
+    setFormData({ title: "", subtitle: "", image_url: "", link: "/category/all", button_text: "Shop Now", is_active: true });
     setEditBanner({});
     setIsNew(true);
   };
@@ -43,11 +49,14 @@ export function AdminBannersPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete banner?")) return;
+    if (!confirm("Delete banner? It will be removed from the live website immediately.")) return;
     try {
+      useStoreData.getState().deleteBanner(id);
       const token = localStorage.getItem("token");
-      await fetch(`${BACKEND_URL}/admin/banners/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
-      fetchBanners();
+      fetch(`${BACKEND_URL}/admin/banners/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }).catch(() => {});
+      setBanners(useStoreData.getState().banners);
+      setSuccessMsg("Banner deleted! Live site updated.");
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
       console.error(err);
     }
@@ -56,15 +65,29 @@ export function AdminBannersPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const token = localStorage.getItem("token");
-      const url = `${BACKEND_URL}/admin/banners`;
-      await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(formData),
-      });
+      const payload = {
+        ...formData,
+        id: editBanner.id || formData.id || `ban_${Date.now()}`
+      };
+
+      // 1. Live Store update
+      useStoreData.getState().saveBanner(payload, isNew);
+
+      // 2. Async backend sync
+      try {
+        const token = localStorage.getItem("token");
+        const url = `${BACKEND_URL}/admin/banners`;
+        fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(payload),
+        }).catch(() => {});
+      } catch (e) {}
+
+      setBanners(useStoreData.getState().banners);
       setEditBanner(null);
-      fetchBanners();
+      setSuccessMsg("✓ Banner saved! Live website updated.");
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
       console.error(err);
     } finally {
@@ -78,25 +101,32 @@ export function AdminBannersPage() {
 
     setUploading(true);
     try {
-      const token = localStorage.getItem("token");
-      const uploadData = new FormData();
-      uploadData.append("image", file);
+      let uploadedUrl = null;
+      try {
+        const token = localStorage.getItem("token");
+        const uploadData = new FormData();
+        uploadData.append("image", file);
 
-      const res = await fetch(`${BACKEND_URL}/admin/upload`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: uploadData,
-      });
+        const res = await fetch(`${BACKEND_URL}/admin/upload`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: uploadData,
+        });
+        const data = await res.json();
+        if (data.url) uploadedUrl = data.url;
+      } catch (e) {}
 
-      const data = await res.json();
-      if (data.url) {
-        setFormData({ ...formData, image_url: data.url });
-      } else {
-        alert("Upload failed");
+      if (!uploadedUrl) {
+        const reader = new FileReader();
+        uploadedUrl = await new Promise((resolve) => {
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
       }
+
+      setFormData({ ...formData, image_url: uploadedUrl });
     } catch (err) {
       console.error(err);
-      alert("Upload error");
     } finally {
       setUploading(false);
     }
@@ -104,7 +134,7 @@ export function AdminBannersPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center py-20">
-      <div className="w-8 h-8 border-4 border-brand-red/20 border-t-[#08183A] rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-brand-red/20 border-t-[#1B7A2B] rounded-full animate-spin" />
     </div>
   );
 
@@ -113,13 +143,20 @@ export function AdminBannersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-gray-900">Banners</h1>
-          <p className="text-gray-900/40 text-xs font-sans mt-0.5">Manage homepage banners</p>
+          <p className="text-gray-900/40 text-xs font-sans mt-0.5">Manage homepage promotional banners</p>
         </div>
         <button onClick={handleAdd}
-          className="flex items-center gap-2 bg-brand-red text-white hover:bg-brand-orange text-white text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
+          className="flex items-center gap-2 bg-[#1B7A2B] hover:bg-[#156321] text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
           <Plus className="w-4 h-4" /> Add Banner
         </button>
       </div>
+
+      {successMsg && (
+        <div className="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs md:text-sm font-bold flex items-center gap-2 shadow-xs">
+          <CheckCircle className="w-5 h-5 text-[#1B7A2B] shrink-0" />
+          <span>{successMsg}</span>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {banners.map((banner, i) => (

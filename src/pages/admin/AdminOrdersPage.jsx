@@ -2,16 +2,17 @@ import React, { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, ChevronDown, Printer, FileText, ExternalLink, X, AlertTriangle, RefreshCcw, Pencil, Plus, Trash2, Search, Link2, History } from "lucide-react";
 import { Link } from "react-router-dom";
-import logoUrl from '../../assets/logo.png';
+import logoUrl from '../../assets/up-traders-logo.png';
+import { useStoreData } from "../../store/useStoreData";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
 const FROM_ADDRESS = {
-  name: "UP Traders",
-  line1: "1-1-738, Vinayaka temple road",
-  city: "Koratla",
+  name: "UP Traders — Complete Grocery Store",
+  line1: "10-34 Malkapur X Road",
+  city: "Sangareddy",
   state: "Telangana",
-  pincode: "",
-  phone: "+91 90326 75205",
+  pincode: "502001",
+  phone: "+91 88860 00847",
 };
 
 const SHIPPING_STATUSES = ["pending", "paid", "processing", "shipped", "delivered", "cancelled"];
@@ -716,9 +717,10 @@ function RefundModal({ order, refunding, refundResult, onConfirm, onClose }) {
 }
 
 export function AdminOrdersPage() {
-  const [orders, setOrders] = useState([]);
+  const storeOrders = useStoreData.getState().orders;
+  const [orders, setOrders] = useState(storeOrders || []);
   const [deliveryPartners, setDeliveryPartners] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [tracking, setTracking] = useState({});
@@ -730,11 +732,12 @@ export function AdminOrdersPage() {
   const [editModal, setEditModal] = useState(null); // order object
 
   useEffect(() => {
+    const current = useStoreData.getState().orders;
+    if (current && current.length > 0) setOrders(current);
+
     const token = localStorage.getItem("token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    if (!token) return;
+
     fetch(`${BACKEND_URL}/admin/delivery-partners`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(d => { if (d.partners) setDeliveryPartners(d.partners); })
@@ -743,18 +746,17 @@ export function AdminOrdersPage() {
     fetch(`${BACKEND_URL}/admin/orders`, { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((d) => {
-        if (d.orders) {
+        if (d.orders && d.orders.length > 0) {
           setOrders(d.orders);
           const t = {};
           d.orders.forEach(o => { t[o.id] = { id: o.tracking_id || "", link: o.tracking_link || "" }; });
           setTracking(t);
         }
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .catch(() => {});
   }, []);
 
-    const assignDeliveryPartner = async (orderId, partnerId) => {
+  const assignDeliveryPartner = async (orderId, partnerId) => {
     try {
       setShipping(prev => ({ ...prev, [`assign_${orderId}`]: true }));
       const res = await fetch(`${BACKEND_URL}/admin/orders/${orderId}/assign-delivery`, {
@@ -776,20 +778,25 @@ export function AdminOrdersPage() {
     }
   };
 
-const updateStatus = async (orderId, status) => {
+  const updateStatus = async (orderId, status) => {
     // Intercept cancellation — show refund modal first
     if (status === 'cancelled') {
       const order = orders.find(o => o.id === orderId);
       setRefundModal(order);
       return;
     }
-    const token = localStorage.getItem("token");
-    await fetch(`${BACKEND_URL}/admin/orders/${orderId}/status`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ status }),
-    });
+
+    useStoreData.getState().updateOrderStatus(orderId, status);
     setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status } : o)));
+
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`${BACKEND_URL}/admin/orders/${orderId}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ status }),
+      });
+    } catch (e) {}
   };
 
   const handleRefundAndCancel = async (order, { breakdown, cancelledItems, cancelType }) => {

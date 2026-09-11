@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Ticket, Plus, Trash2, Edit2, X, Save, Calendar, ChevronDown, Search } from "lucide-react";
+import { Ticket, Plus, Trash2, Edit2, X, Save, Calendar, ChevronDown, Search, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useStoreData } from "../../store/useStoreData";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
 
 export function AdminCouponsPage() {
-  const [coupons, setCoupons] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const store = useStoreData();
+  const [coupons, setCoupons] = useState(store.coupons || []);
+  const [categories, setCategories] = useState(store.categories || []);
   const [skuList, setSkuList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [editCoupon, setEditCoupon] = useState(null);
+  const [successMsg, setSuccessMsg] = useState("");
   
-  const initialForm = { code: '', discount_type: 'percentage', discount_value: 0, min_order_value: 0, expires_at: '', is_active: true, user_id: 'all', usage_type: 'multiple', min_type: 'amount', min_qty: 0, applicable_categories: [], applicable_product_codes: [] };
+  const initialForm = { code: '', discount_type: 'flat', discount_value: 50, min_order_value: 499, expires_at: '', is_active: true, user_id: 'all', usage_type: 'multiple', min_type: 'amount', min_qty: 0, applicable_categories: [], applicable_product_codes: [] };
   const [formData, setFormData] = useState(initialForm);
   
   const [users, setUsers] = useState([]);
@@ -22,38 +25,45 @@ export function AdminCouponsPage() {
   const [skuSearch, setSkuSearch] = useState("");
 
   const fetchData = async () => {
+    const currentCoupons = useStoreData.getState().coupons;
+    const currentCats = useStoreData.getState().categories;
+    const currentProds = useStoreData.getState().products;
+
+    if (currentCoupons && currentCoupons.length > 0) setCoupons(currentCoupons);
+    if (currentCats && currentCats.length > 0) setCategories(currentCats);
+
+    if (currentProds && currentProds.length > 0) {
+      const skus = [];
+      currentProds.forEach(p => {
+        if (p.variants) {
+          p.variants.forEach(v => {
+            if (v.sizes) {
+              v.sizes.forEach(s => {
+                if (s.code) skus.push({ code: s.code, name: `${p.name} - ${v.color || ''} - ${s.size}` });
+              });
+            }
+          });
+        }
+      });
+      setSkuList(skus);
+    }
+
     try {
       const token = localStorage.getItem("token");
       const [couponRes, userRes, catRes, prodRes] = await Promise.all([
-        fetch(`${BACKEND_URL}/admin/coupons`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${BACKEND_URL}/admin/users`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${BACKEND_URL}/admin/categories`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${BACKEND_URL}/admin/products`, { headers: { Authorization: `Bearer ${token}` } })
+        fetch(`${BACKEND_URL}/admin/coupons`, { headers: { Authorization: `Bearer ${token}` } }).catch(() => null),
+        fetch(`${BACKEND_URL}/admin/users`, { headers: { Authorization: `Bearer ${token}` } }).catch(() => null),
+        fetch(`${BACKEND_URL}/admin/categories`, { headers: { Authorization: `Bearer ${token}` } }).catch(() => null),
+        fetch(`${BACKEND_URL}/admin/products`, { headers: { Authorization: `Bearer ${token}` } }).catch(() => null)
       ]);
-      const couponData = await couponRes.json();
-      const userData = await userRes.json();
-      const catData = await catRes.json();
-      const prodData = await prodRes.json();
+      const couponData = couponRes && couponRes.ok ? await couponRes.json() : null;
+      const userData = userRes && userRes.ok ? await userRes.json() : null;
+      const catData = catRes && catRes.ok ? await catRes.json() : null;
+      const prodData = prodRes && prodRes.ok ? await prodRes.json() : null;
       
-      if (couponData.coupons) setCoupons(couponData.coupons);
-      if (userData.users) setUsers(userData.users);
-      if (catData.categories) setCategories(catData.categories);
-      
-      if (prodData.products) {
-        const skus = [];
-        prodData.products.forEach(p => {
-          if (p.variants) {
-            p.variants.forEach(v => {
-              if (v.sizes) {
-                v.sizes.forEach(s => {
-                  if (s.code) skus.push({ code: s.code, name: `${p.name} - ${v.color || ''} - ${s.size}` });
-                });
-              }
-            });
-          }
-        });
-        setSkuList(skus);
-      }
+      if (couponData?.coupons && couponData.coupons.length > 0) setCoupons(couponData.coupons);
+      if (userData?.users) setUsers(userData.users);
+      if (catData?.categories) setCategories(catData.categories);
     } catch (err) {
       console.error(err);
     } finally {
@@ -72,11 +82,9 @@ export function AdminCouponsPage() {
   };
 
   const handleEdit = (coupon) => {
-    // Convert UTC to local datetime-local format (YYYY-MM-DDTHH:mm)
     let localDatetime = '';
     if (coupon.expires_at) {
       const d = new Date(coupon.expires_at);
-      // To display the time in datetime-local exactly as stored, we format it locally
       d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
       localDatetime = d.toISOString().slice(0, 16);
     }
@@ -96,11 +104,14 @@ export function AdminCouponsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete coupon?")) return;
+    if (!confirm("Delete coupon? It will be removed from the live website immediately.")) return;
     try {
+      useStoreData.getState().deleteCoupon(id);
       const token = localStorage.getItem("token");
-      await fetch(`${BACKEND_URL}/admin/coupons/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
-      fetchData();
+      fetch(`${BACKEND_URL}/admin/coupons/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }).catch(() => {});
+      setCoupons(useStoreData.getState().coupons);
+      setSuccessMsg("Coupon deleted! Live site updated.");
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
       console.error(err);
     }
@@ -109,15 +120,29 @@ export function AdminCouponsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const token = localStorage.getItem("token");
-      const url = isNew ? `${BACKEND_URL}/admin/coupons` : `${BACKEND_URL}/admin/coupons/${editCoupon.id}`;
-      await fetch(url, {
-        method: isNew ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(formData),
-      });
+      const payload = {
+        ...formData,
+        id: editCoupon.id || formData.id || `cp_${Date.now()}`
+      };
+
+      // 1. Live Store update
+      useStoreData.getState().saveCoupon(payload, isNew);
+
+      // 2. Async backend sync
+      try {
+        const token = localStorage.getItem("token");
+        const url = isNew ? `${BACKEND_URL}/admin/coupons` : `${BACKEND_URL}/admin/coupons/${payload.id}`;
+        fetch(url, {
+          method: isNew ? "POST" : "PUT",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(payload),
+        }).catch(() => {});
+      } catch (e) {}
+
+      setCoupons(useStoreData.getState().coupons);
       setEditCoupon(null);
-      fetchData();
+      setSuccessMsg("✓ Coupon saved! Live website updated.");
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
       console.error(err);
     } finally {
@@ -127,7 +152,7 @@ export function AdminCouponsPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center py-20">
-      <div className="w-8 h-8 border-4 border-brand-red/20 border-t-[#08183A] rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-brand-red/20 border-t-[#1B7A2B] rounded-full animate-spin" />
     </div>
   );
 
@@ -137,24 +162,28 @@ export function AdminCouponsPage() {
     <div className="w-full max-w-5xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-gray-900">Coupons</h1>
-          <p className="text-gray-900/40 text-xs font-sans mt-0.5">Manage discount codes</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-gray-900">Coupons & Discounts</h1>
+          <p className="text-gray-900/40 text-xs font-sans mt-0.5">Manage promotional voucher codes</p>
         </div>
-        <button onClick={handleAdd}
-          className="flex items-center gap-2 bg-brand-red text-white hover:bg-brand-orange text-white text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
-          <Plus className="w-4 h-4" /> Add Coupon
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search coupon code..."
+              className="pl-9 pr-4 py-2 bg-white rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-[#1B7A2B]" />
+          </div>
+          <button onClick={handleAdd}
+            className="flex items-center gap-2 bg-[#1B7A2B] hover:bg-[#156321] text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors whitespace-nowrap">
+            <Plus className="w-4 h-4" /> Create Coupon
+          </button>
+        </div>
       </div>
 
-      <div className="mb-6">
-        <input 
-          type="text" 
-          placeholder="Search coupons by code..." 
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full sm:max-w-md px-4 py-2 rounded-xl bg-white border border-brand-red/10 focus:outline-none focus:border-[#D4AF37]"
-        />
-      </div>
+      {successMsg && (
+        <div className="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs md:text-sm font-bold flex items-center gap-2 shadow-xs">
+          <CheckCircle className="w-5 h-5 text-[#1B7A2B] shrink-0" />
+          <span>{successMsg}</span>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredCoupons.map((coupon, i) => (

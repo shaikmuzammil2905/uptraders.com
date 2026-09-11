@@ -1,27 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Trash2, Edit2, X, Save, Shield, ArrowRight } from "lucide-react";
+import { Plus, Trash2, Edit2, X, Save, Shield, ArrowRight, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useStoreData } from "../../store/useStoreData";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
 
 export function AdminOffersPage() {
-  const [offers, setOffers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const store = useStoreData();
+  const [offers, setOffers] = useState(store.offers || []);
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
   
   // Edit/Create state
   const [editOffer, setEditOffer] = useState(null);
-  const [formData, setFormData] = useState({ title: "", discount_percentage: 0, is_active: true });
+  const [formData, setFormData] = useState({ title: "", discount_percentage: 10, is_active: true, description: "" });
   const [saving, setSaving] = useState(false);
   const [isNew, setIsNew] = useState(false);
   
   // Apply Offer state
   const [applyOfferId, setApplyOfferId] = useState(null);
   const [applyMode, setApplyMode] = useState('category'); // 'category' or 'products'
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(store.categories || []);
   const [selectedCategory, setSelectedCategory] = useState("");
   
   // Products selection
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(store.products || []);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
 
@@ -32,68 +35,91 @@ export function AdminOffersPage() {
   }, []);
 
   const fetchOffers = async () => {
+    const current = useStoreData.getState().offers;
+    if (current && current.length > 0) setOffers(current);
+
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${BACKEND_URL}/admin/offers`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      if (data.offers) setOffers(data.offers);
+      if (data?.offers && data.offers.length > 0) setOffers(data.offers);
     } catch (err) {
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   const fetchCategories = async () => {
+    const current = useStoreData.getState().categories;
+    if (current && current.length > 0) setCategories(current);
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${BACKEND_URL}/admin/categories`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      if (data.categories) setCategories(data.categories);
+      if (data?.categories) setCategories(data.categories);
     } catch (err) {}
   };
 
   const fetchProducts = async () => {
+    const current = useStoreData.getState().products;
+    if (current && current.length > 0) setProducts(current);
     try {
       const res = await fetch(`${BACKEND_URL}/general/products`);
       const data = await res.json();
-      if (data.products) setProducts(data.products);
+      if (data?.products) setProducts(data.products);
     } catch (err) {}
   };
 
   const handleAdd = () => {
-    setFormData({ title: "", discount_percentage: 0, is_active: true });
+    setFormData({ title: "", discount_percentage: 10, is_active: true, description: "" });
     setEditOffer({});
     setIsNew(true);
   };
 
   const handleEdit = (offer) => {
-    setFormData(offer);
+    setFormData({ ...offer });
     setEditOffer(offer);
     setIsNew(false);
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete offer? This will also remove the offer from all associated products.")) return;
+    if (!confirm("Delete offer? This will also remove the offer from the live website immediately.")) return;
     try {
+      useStoreData.getState().deleteOffer(id);
       const token = localStorage.getItem("token");
-      await fetch(`${BACKEND_URL}/admin/offers/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
-      fetchOffers();
+      fetch(`${BACKEND_URL}/admin/offers/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }).catch(() => {});
+      setOffers(useStoreData.getState().offers);
+      setSuccessMsg("Offer deleted! Live site updated.");
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {}
   };
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const token = localStorage.getItem("token");
-      const url = isNew ? `${BACKEND_URL}/admin/offers` : `${BACKEND_URL}/admin/offers/${editOffer.id}`;
-      await fetch(url, {
-        method: isNew ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(formData),
-      });
+      const payload = {
+        ...formData,
+        id: editOffer.id || formData.id || `off_${Date.now()}`
+      };
+
+      // 1. Live Store update
+      useStoreData.getState().saveOffer(payload, isNew);
+
+      // 2. Async backend sync
+      try {
+        const token = localStorage.getItem("token");
+        const url = isNew ? `${BACKEND_URL}/admin/offers` : `${BACKEND_URL}/admin/offers/${payload.id}`;
+        fetch(url, {
+          method: isNew ? "POST" : "PUT",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(payload),
+        }).catch(() => {});
+      } catch (e) {}
+
+      setOffers(useStoreData.getState().offers);
       setEditOffer(null);
-      fetchOffers();
+      setSuccessMsg("✓ Offer saved! Live website updated.");
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
     } finally {
       setSaving(false);

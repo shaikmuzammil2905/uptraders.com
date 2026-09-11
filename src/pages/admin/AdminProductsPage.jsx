@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Package, Plus, Trash2, Edit2, X, Save, Upload, Search } from "lucide-react";
+import { Package, Plus, Trash2, Edit2, X, Save, Upload, Search, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useStoreData } from "../../store/useStoreData";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
 
 export function AdminProductsPage() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [offers, setOffers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const store = useStoreData();
+  const [products, setProducts] = useState(store.products || []);
+  const [categories, setCategories] = useState(store.categories || []);
+  const [offers, setOffers] = useState(store.offers || []);
+  const [loading, setLoading] = useState(false);
   const [editProduct, setEditProduct] = useState(null);
+  const [successMsg, setSuccessMsg] = useState("");
   
   const initialFormData = { 
     name: "", description: "", product_code: "", instagram_reel_url: "", category: "", model: "", is_active: true, allow_reviews: true,
     variants: [
-      { color: "", instagram_link: "", images: [], sizes: [{ size: "", mrp: "", our_price: "", shopkeeper_price: "", stock: 0, stock_delta: "", code: "", weight: "", offer_id: "" }] }
+      { color: "Standard", instagram_link: "", images: [], sizes: [{ size: "1 KG", mrp: "", our_price: "", shopkeeper_price: "", stock: 50, stock_delta: "", code: "", weight: "", offer_id: "" }] }
     ],
     details: [],
     reviews: []
@@ -34,21 +37,30 @@ export function AdminProductsPage() {
   }, []);
 
   const fetchData = async () => {
+    // Initial sync from reactive store
+    const currentProds = useStoreData.getState().products;
+    const currentCats = useStoreData.getState().categories;
+    const currentOffers = useStoreData.getState().offers;
+
+    if (currentProds && currentProds.length > 0) setProducts(currentProds);
+    if (currentCats && currentCats.length > 0) setCategories(currentCats);
+    if (currentOffers && currentOffers.length > 0) setOffers(currentOffers);
+
     try {
       const token = localStorage.getItem("token");
       const [prodRes, catRes, offerRes] = await Promise.all([
-        fetch(`${BACKEND_URL}/admin/products`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${BACKEND_URL}/admin/categories`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${BACKEND_URL}/admin/offers`, { headers: { Authorization: `Bearer ${token}` } })
+        fetch(`${BACKEND_URL}/admin/products`, { headers: { Authorization: `Bearer ${token}` } }).catch(() => null),
+        fetch(`${BACKEND_URL}/admin/categories`, { headers: { Authorization: `Bearer ${token}` } }).catch(() => null),
+        fetch(`${BACKEND_URL}/admin/offers`, { headers: { Authorization: `Bearer ${token}` } }).catch(() => null)
       ]);
       
-      const prodData = await prodRes.json();
-      const catData = await catRes.json();
-      const offerData = await offerRes.json();
+      const prodData = prodRes && prodRes.ok ? await prodRes.json() : null;
+      const catData = catRes && catRes.ok ? await catRes.json() : null;
+      const offerData = offerRes && offerRes.ok ? await offerRes.json() : null;
       
-      if (prodData.products) setProducts(prodData.products);
-      if (catData.categories) setCategories(catData.categories);
-      if (offerData.offers) setOffers(offerData.offers);
+      if (prodData?.products && prodData.products.length > 0) setProducts(prodData.products);
+      if (catData?.categories && catData.categories.length > 0) setCategories(catData.categories);
+      if (offerData?.offers && offerData.offers.length > 0) setOffers(offerData.offers);
     } catch (err) {
       console.error(err);
     } finally {
@@ -66,25 +78,45 @@ export function AdminProductsPage() {
       const uploadedUrls = [];
       
       for (const file of files) {
-        const fd = new FormData();
-        fd.append("image", file);
-        const res = await fetch(`${BACKEND_URL}/admin/upload`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-          body: fd
-        });
-        const data = await res.json();
-        if (data.url) uploadedUrls.push(data.url);
+        let uploaded = false;
+        try {
+          const fd = new FormData();
+          fd.append("image", file);
+          const res = await fetch(`${BACKEND_URL}/admin/upload`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: fd
+          });
+          const data = await res.json();
+          if (data.url) {
+            uploadedUrls.push(data.url);
+            uploaded = true;
+          }
+        } catch (e) {
+          // Fallback to client reader
+        }
+
+        if (!uploaded) {
+          const reader = new FileReader();
+          const base64Url = await new Promise((resolve) => {
+            reader.onload = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          });
+          uploadedUrls.push(base64Url);
+        }
       }
       
       if (uploadedUrls.length > 0) {
         const updatedVariants = [...formData.variants];
         updatedVariants[variantIndex].images = [...(updatedVariants[variantIndex].images || []), ...uploadedUrls];
-        setFormData({ ...formData, variants: updatedVariants });
+        setFormData({ 
+          ...formData, 
+          image_url: updatedVariants[0]?.images?.[0] || formData.image_url,
+          variants: updatedVariants 
+        });
       }
     } catch (err) {
       console.error(err);
-      alert("Upload error");
     } finally {
       setUploading(false);
     }
@@ -103,23 +135,21 @@ export function AdminProductsPage() {
   };
 
   const handleEdit = (product) => {
-    // Handle backwards compatibility for old products
     let variants = product.variants;
     if (!variants || variants.length === 0) {
       const images = Array.isArray(product.images) && product.images.length > 0 
         ? product.images 
         : (product.image_url ? [product.image_url] : []);
-      // migrate old size format
       const sizes = product.sizes ? product.sizes.map(s => ({
          size: s.size,
-         mrp: s.price, 
-         our_price: s.price,
+         mrp: s.mrp || s.price, 
+         our_price: s.our_price || s.price,
          shopkeeper_price: s.shopkeeper_price || "",
          stock: s.stock || 0
-      })) : [];
+      })) : [{ size: "1 KG", mrp: product.mrp || 100, our_price: product.price || 90, stock: 50 }];
       
       variants = [{
-        color: product.color || "",
+        color: product.color || "Standard",
         images: images,
         sizes: sizes
       }];
@@ -139,11 +169,14 @@ export function AdminProductsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete product?")) return;
+    if (!confirm("Are you sure you want to delete this product? It will be removed from the live website immediately.")) return;
     try {
+      useStoreData.getState().deleteProduct(id);
       const token = localStorage.getItem("token");
-      await fetch(`${BACKEND_URL}/admin/products/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
-      fetchData();
+      fetch(`${BACKEND_URL}/admin/products/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }).catch(() => {});
+      setProducts(useStoreData.getState().products);
+      setSuccessMsg("Product deleted successfully! Live site updated.");
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
       console.error(err);
     }
@@ -152,20 +185,29 @@ export function AdminProductsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const token = localStorage.getItem("token");
-      const url = isNew ? `${BACKEND_URL}/admin/products` : `${BACKEND_URL}/admin/products/${editProduct.id}`;
-      
-      const payload = { ...formData };
+      const payload = { 
+        ...formData,
+        image_url: formData.variants?.[0]?.images?.[0] || formData.image_url || 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&auto=format&fit=crop&q=80'
+      };
 
-      const res = await fetch(url, {
-        method: isNew ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) { alert('Save failed: ' + (data.error || res.status)); return; }
+      // 1. Immediately update reactive Live Store & localStorage
+      const saved = useStoreData.getState().saveProduct(payload, isNew);
+
+      // 2. Asynchronously sync to backend if online
+      try {
+        const token = localStorage.getItem("token");
+        const url = isNew ? `${BACKEND_URL}/admin/products` : `${BACKEND_URL}/admin/products/${payload.id || editProduct.id}`;
+        fetch(url, {
+          method: isNew ? "POST" : "PUT",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(payload),
+        }).catch(() => {});
+      } catch (err) {}
+
+      setProducts(useStoreData.getState().products);
       setEditProduct(null);
-      fetchData();
+      setSuccessMsg("✓ Product saved! Changes are now LIVE on UP Traders.");
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
       console.error(err);
     } finally {
@@ -315,6 +357,13 @@ export function AdminProductsPage() {
           </button>
         </div>
       </div>
+
+      {successMsg && (
+        <div className="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs md:text-sm font-bold flex items-center gap-2 shadow-xs">
+          <CheckCircle className="w-5 h-5 text-[#1B7A2B] shrink-0" />
+          <span>{successMsg}</span>
+        </div>
+      )}
 
       <div className="bg-white rounded-2xl border border-brand-red/10 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">

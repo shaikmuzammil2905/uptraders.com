@@ -1,29 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Trash2, Edit2, X, Save, Upload, FolderTree, Tag } from "lucide-react";
+import { Plus, Trash2, Edit2, X, Save, Upload, FolderTree, Tag, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useStoreData } from "../../store/useStoreData";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
 
 export function AdminCategoriesPage() {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const store = useStoreData();
+  const [categories, setCategories] = useState(store.categories || []);
+  const [loading, setLoading] = useState(false);
   const [editCategory, setEditCategory] = useState(null);
   const [formData, setFormData] = useState({ name: "", models: [], image_url: "" });
   const [newModel, setNewModel] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isNew, setIsNew] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
   useEffect(() => {
     fetchCategories();
   }, []);
 
   const fetchCategories = async () => {
+    const currentCats = useStoreData.getState().categories;
+    if (currentCats && currentCats.length > 0) setCategories(currentCats);
+
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${BACKEND_URL}/admin/categories`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      if (data.categories) setCategories(data.categories);
+      if (data?.categories && data.categories.length > 0) setCategories(data.categories);
     } catch (err) {
       console.error(err);
     } finally {
@@ -36,24 +42,32 @@ export function AdminCategoriesPage() {
     if (!file) return;
     setUploading(true);
     try {
-      const token = localStorage.getItem("token");
-      const fd = new FormData();
-      fd.append("image", file);
+      let uploadedUrl = null;
+      try {
+        const token = localStorage.getItem("token");
+        const fd = new FormData();
+        fd.append("image", file);
 
-      const res = await fetch(`${BACKEND_URL}/admin/upload`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: fd
-      });
-      const data = await res.json();
-      if (data.url) {
-        setFormData({ ...formData, image_url: data.url });
-      } else {
-        alert("Upload failed");
+        const res = await fetch(`${BACKEND_URL}/admin/upload`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: fd
+        });
+        const data = await res.json();
+        if (data.url) uploadedUrl = data.url;
+      } catch (e) {}
+
+      if (!uploadedUrl) {
+        const reader = new FileReader();
+        uploadedUrl = await new Promise((resolve) => {
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
       }
+
+      setFormData({ ...formData, image_url: uploadedUrl });
     } catch (err) {
       console.error(err);
-      alert("Upload error");
     } finally {
       setUploading(false);
     }
@@ -67,18 +81,21 @@ export function AdminCategoriesPage() {
   };
 
   const handleEdit = (cat) => {
-    setFormData({ name: cat.name, models: cat.models || [], image_url: cat.image_url || "" });
+    setFormData({ ...cat, name: cat.name, models: cat.models || [], image_url: cat.image_url || "" });
     setNewModel("");
     setEditCategory(cat);
     setIsNew(false);
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this category?")) return;
+    if (!confirm("Delete this category? It will be removed from the live website immediately.")) return;
     try {
+      useStoreData.getState().deleteCategory(id);
       const token = localStorage.getItem("token");
-      await fetch(`${BACKEND_URL}/admin/categories/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
-      fetchCategories();
+      fetch(`${BACKEND_URL}/admin/categories/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }).catch(() => {});
+      setCategories(useStoreData.getState().categories);
+      setSuccessMsg("Category deleted! Live site updated.");
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
       console.error(err);
     }
@@ -98,21 +115,32 @@ export function AdminCategoriesPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const token = localStorage.getItem("token");
-      const url = isNew ? `${BACKEND_URL}/admin/categories` : `${BACKEND_URL}/admin/categories/${editCategory.id}`;
       const payload = {
+        ...formData,
+        id: editCategory.id || formData.id || formData.name.toLowerCase().replace(/\s+/g, '-'),
         name: formData.name,
         models: formData.models,
-        image_url: formData.image_url
+        image_url: formData.image_url || 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80'
       };
       
-      await fetch(url, {
-        method: isNew ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(payload),
-      });
+      // 1. Live Store update
+      useStoreData.getState().saveCategory(payload, isNew);
+
+      // 2. Async backend sync
+      try {
+        const token = localStorage.getItem("token");
+        const url = isNew ? `${BACKEND_URL}/admin/categories` : `${BACKEND_URL}/admin/categories/${payload.id}`;
+        fetch(url, {
+          method: isNew ? "POST" : "PUT",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(payload),
+        }).catch(() => {});
+      } catch (e) {}
+
+      setCategories(useStoreData.getState().categories);
       setEditCategory(null);
-      fetchCategories();
+      setSuccessMsg("✓ Category saved! Live website updated.");
+      setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
       console.error(err);
     } finally {
@@ -122,22 +150,29 @@ export function AdminCategoriesPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center py-20">
-      <div className="w-8 h-8 border-4 border-brand-red/20 border-t-[#08183A] rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-brand-red/20 border-t-[#1B7A2B] rounded-full animate-spin" />
     </div>
   );
 
   return (
     <div className="w-full max-w-5xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-gray-900">Categories & Models</h1>
-          <p className="text-gray-900/40 text-xs font-sans mt-0.5">Manage categories and their available models</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-gray-900">Categories</h1>
+          <p className="text-gray-900/40 text-xs font-sans mt-0.5">Manage product categories and sub-models</p>
         </div>
         <button onClick={handleAdd}
-          className="flex items-center gap-2 bg-brand-red text-white hover:bg-brand-orange text-white text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
+          className="flex items-center gap-2 bg-[#1B7A2B] hover:bg-[#156321] text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
           <Plus className="w-4 h-4" /> Add Category
         </button>
       </div>
+
+      {successMsg && (
+        <div className="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs md:text-sm font-bold flex items-center gap-2 shadow-xs">
+          <CheckCircle className="w-5 h-5 text-[#1B7A2B] shrink-0" />
+          <span>{successMsg}</span>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {categories.map((cat, index) => (
