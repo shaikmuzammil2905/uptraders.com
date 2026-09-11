@@ -191,21 +191,33 @@ export function AdminCategoriesPage() {
                   <p className="text-xs text-gray-900/50 mt-0.5">{cat.models?.length || 0} Models</p>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <button onClick={() => handleEdit(cat)} className="p-2 text-gray-900 hover:bg-brand-red text-white/10 rounded-full transition-colors"><Edit2 className="w-4 h-4" /></button>
-                <button onClick={() => handleDelete(cat.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"><Trash2 className="w-4 h-4" /></button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => handleEdit(cat)}
+                  className="flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-[#1B7A2B] border border-emerald-300 font-bold px-3 py-1.5 rounded-lg text-xs transition-all shadow-xs"
+                  title="Edit this category"
+                >
+                  <Edit2 className="w-3.5 h-3.5" /> <span>Edit</span>
+                </button>
+                <button
+                  onClick={() => handleDelete(cat.id)}
+                  className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold px-2.5 py-1.5 rounded-lg text-xs transition-all shadow-xs"
+                  title="Delete this category"
+                >
+                  <Trash2 className="w-3.5 h-3.5" /> <span>Delete</span>
+                </button>
               </div>
             </div>
             
             <div className="p-5 flex-1 bg-white">
-              <h4 className="text-xs font-bold text-gray-900/40 uppercase tracking-wider mb-3">Available Models</h4>
+              <h4 className="text-xs font-bold text-gray-900/40 uppercase tracking-wider mb-3">Available Commodities & Varieties</h4>
               {(!cat.models || cat.models.length === 0) ? (
-                <p className="text-sm text-gray-900/30">No models added.</p>
+                <p className="text-sm text-gray-900/30">All varieties included.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {cat.models.map((model, i) => (
-                    <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-red text-white/5 border border-brand-red/10 text-sm font-medium text-gray-900">
-                      <Tag className="w-3 h-3 text-gray-900" /> {model}
+                    <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[#156321] border border-emerald-200 text-xs font-bold">
+                      <Tag className="w-3 h-3 text-[#1B7A2B]" /> {model}
                     </span>
                   ))}
                 </div>
@@ -224,7 +236,7 @@ export function AdminCategoriesPage() {
       {editCategory && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="bg-white border-b border-brand-red/10 px-6 py-4 flex items-center justify-between shrink-0">
+            <div className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between shrink-0">
               <h2 className="font-serif text-xl font-bold text-gray-900">{isNew ? "Add" : "Edit"} Category</h2>
               <button onClick={() => setEditCategory(null)} className="text-gray-900/50 hover:text-gray-900">
                 <X className="w-5 h-5" />
@@ -233,9 +245,9 @@ export function AdminCategoriesPage() {
             
             <div className="p-6 space-y-5 overflow-y-auto">
               <div>
-                <label className="text-xs font-sans font-semibold text-gray-900/70 mb-1 block">Category Name</label>
-                <input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Mobile Phones"
-                  className="w-full px-3 py-2 rounded-lg bg-[#FDF8F0] border border-brand-red/10 focus:outline-none focus:border-brand-red/40" />
+                <label className="text-xs font-sans font-semibold text-gray-700 mb-1 block">Category Name</label>
+                <input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Rice & Grains, Cooking Oils, Spices"
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-[#1B7A2B]" />
               </div>
               
               <div>

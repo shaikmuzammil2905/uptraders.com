@@ -412,8 +412,8 @@ export function AdminProductsPage() {
                         {row.size.stock} in stock
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-brand-dark-blue font-bold">
-                      {row.size.shopkeeper_price ? `$${row.size.shopkeeper_price}` : '-'}
+                    <td className="px-4 py-3 text-sm text-[#1B7A2B] font-bold">
+                      {row.size.our_price ? `₹${row.size.our_price}` : row.size.shopkeeper_price ? `₹${row.size.shopkeeper_price}` : '-'}
                     </td>
                     <td className="px-4 py-3">
                       {offerObj ? (
@@ -426,9 +426,21 @@ export function AdminProductsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button onClick={() => handleEdit(row.product)} className="p-1.5 text-gray-900 hover:bg-brand-red text-white/10 rounded"><Edit2 className="w-4 h-4" /></button>
-                        <button onClick={() => handleDelete(row.product.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded"><Trash2 className="w-4 h-4" /></button>
+                      <div className="flex justify-end items-center gap-1.5">
+                        <button
+                          onClick={() => handleEdit(row.product)}
+                          className="flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-[#1B7A2B] border border-emerald-300 font-bold px-3 py-1.5 rounded-lg text-xs transition-all shadow-xs"
+                          title="Edit this product"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" /> <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(row.product.id)}
+                          className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold px-2.5 py-1.5 rounded-lg text-xs transition-all shadow-xs"
+                          title="Delete this product"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> <span>Delete</span>
+                        </button>
                       </div>
                     </td>
                   </tr>
