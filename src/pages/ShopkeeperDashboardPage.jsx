@@ -32,7 +32,8 @@ const WHOLESALE_RATE_CARD = [
     minOrderQty: '2 Bags (50kg)',
     stock: 'In Stock (450 Bags)',
     gst: '0% (Exempt)',
-    badge: 'Fast Moving'
+    badge: 'Fast Moving',
+    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'ws-2',
@@ -45,7 +46,8 @@ const WHOLESALE_RATE_CARD = [
     minOrderQty: '4 Bags (100kg)',
     stock: 'In Stock (620 Bags)',
     gst: '0% (Exempt)',
-    badge: 'Best Seller'
+    badge: 'Best Seller',
+    image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'ws-3',
@@ -58,7 +60,8 @@ const WHOLESALE_RATE_CARD = [
     minOrderQty: '2 Tins (30kg)',
     stock: 'In Stock (180 Tins)',
     gst: '5%',
-    badge: 'High Demand'
+    badge: 'High Demand',
+    image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'ws-4',
@@ -71,7 +74,8 @@ const WHOLESALE_RATE_CARD = [
     minOrderQty: '1 Jar (15kg)',
     stock: 'In Stock (45 Jars)',
     gst: '12%',
-    badge: 'Premium'
+    badge: 'Premium',
+    image: 'https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'ws-5',
@@ -84,7 +88,8 @@ const WHOLESALE_RATE_CARD = [
     minOrderQty: '1 Sack (30kg)',
     stock: 'In Stock (210 Sacks)',
     gst: '0% (Exempt)',
-    badge: 'Staple'
+    badge: 'Staple',
+    image: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'ws-6',
@@ -97,7 +102,8 @@ const WHOLESALE_RATE_CARD = [
     minOrderQty: '2 Bags (100kg)',
     stock: 'In Stock (320 Bags)',
     gst: '5%',
-    badge: 'High Volume'
+    badge: 'High Volume',
+    image: 'https://images.unsplash.com/photo-1622484210800-885107928904?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'ws-7',
@@ -110,7 +116,8 @@ const WHOLESALE_RATE_CARD = [
     minOrderQty: '1 Sack (10kg)',
     stock: 'In Stock (90 Sacks)',
     gst: '5%',
-    badge: 'Direct Farm'
+    badge: 'Direct Farm',
+    image: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'ws-8',
@@ -123,7 +130,8 @@ const WHOLESALE_RATE_CARD = [
     minOrderQty: '1 Sack (10kg)',
     stock: 'In Stock (75 Sacks)',
     gst: '5%',
-    badge: 'Special Margin'
+    badge: 'Special Margin',
+    image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=600&q=80'
   }
 ];
 
@@ -141,7 +149,7 @@ export function ShopkeeperDashboardPage() {
   const [orderSent, setOrderSent] = useState(false);
 
   const shopkeeperUser = user || {
-    name: 'Praveen Kumar (Sri Sai Kirana Mart)',
+    name: 'Praveen Kumar',
     email: 'shopkeeper@uptraders.com',
     phone: '+91 98480 22334',
     businessName: 'Sri Sai Kirana & General Stores',
@@ -187,7 +195,8 @@ export function ShopkeeperDashboardPage() {
           minOrderQty: '1 Unit',
           stock: stockNum > 0 ? `In Stock (${stockNum})` : 'Out of Stock',
           gst: 'Standard',
-          badge: 'Wholesale'
+          badge: 'Wholesale',
+          image: product.images?.[0] || product.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'
         });
       }
     });
@@ -422,7 +431,16 @@ export function ShopkeeperDashboardPage() {
                       <tbody className="divide-y divide-gray-50">
                         {order.items.map((it, idx) => (
                           <tr key={idx} className="hover:bg-gray-50/80">
-                            <td className="py-2.5 font-bold text-gray-800">{it.name}</td>
+                            <td className="py-2.5 font-bold text-gray-800 flex items-center gap-2.5">
+                              <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center">
+                                {it.image ? (
+                                  <img src={it.image} alt={it.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <span className="text-xs font-bold text-[#1B7A2B]">{it.name.charAt(0)}</span>
+                                )}
+                              </div>
+                              <span>{it.name}</span>
+                            </td>
                             <td className="py-2.5 text-center text-gray-500">{it.unit}</td>
                             <td className="py-2.5 text-center text-gray-700 font-semibold">₹{it.price.toLocaleString('en-IN')}</td>
                             <td className="py-2.5 text-center">
@@ -509,17 +527,29 @@ export function ShopkeeperDashboardPage() {
               {filteredRates.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 hover:border-[#FFC107] hover:shadow-md transition-all flex flex-col justify-between"
+                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 hover:border-[#1B7A2B] hover:shadow-md transition-all flex flex-col justify-between group overflow-hidden"
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400">{item.brand}</span>
-                      <span className="bg-amber-100 text-amber-800 text-[10px] font-black px-2 py-0.5 rounded-full">
+                    {/* Product Image */}
+                    <div className="relative w-full h-44 bg-gray-50 rounded-xl overflow-hidden mb-3 border border-gray-100 flex items-center justify-center">
+                      <img
+                        src={item.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'}
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
+                        }}
+                      />
+                      <span className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md">
+                        {item.brand}
+                      </span>
+                      <span className="absolute top-2 right-2 bg-amber-400 text-amber-950 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-sm">
                         {item.badge}
                       </span>
                     </div>
 
-                    <h3 className="font-bold text-gray-900 text-sm leading-snug">{item.name}</h3>
+                    <h3 className="font-bold text-gray-900 text-sm leading-snug line-clamp-2">{item.name}</h3>
 
                     <div className="mt-3 bg-gray-50 p-3 rounded-xl flex items-center justify-between">
                       <div>

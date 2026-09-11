@@ -62,10 +62,10 @@ export const demoShopkeeperOrders = [
     status: 'Delivered',
     paymentMethod: 'Cash on Delivery',
     items: [
-      { name: 'Sona Masoori Rice (25 KG Bag)', unit: '25kg Bag', price: 1250, quantity: 10 },
-      { name: 'Refined Sunflower Cooking Oil (15 L Tin)', unit: '15L Tin', price: 1720, quantity: 4 },
-      { name: 'Pure Desi Cow Ghee (5 L Jar)', unit: '5L Jar', price: 2850, quantity: 2 },
-      { name: 'Unpolished Toor Dal (5 KG Pack)', unit: '5kg Pack', price: 690, quantity: 6 }
+      { name: 'Sona Masoori Rice (25 KG Bag)', unit: '25kg Bag', price: 1250, quantity: 10, image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=300&q=80' },
+      { name: 'Refined Sunflower Cooking Oil (15 L Tin)', unit: '15L Tin', price: 1720, quantity: 4, image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=300&q=80' },
+      { name: 'Pure Desi Cow Ghee (5 L Jar)', unit: '5L Jar', price: 2850, quantity: 2, image: 'https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?auto=format&fit=crop&w=300&q=80' },
+      { name: 'Unpolished Toor Dal (5 KG Pack)', unit: '5kg Pack', price: 690, quantity: 6, image: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?auto=format&fit=crop&w=300&q=80' }
     ],
     totalAmount: 29220,
     shippingAddress: 'Sri Sai Kirana Mart, Shop #4, Market Yard, Sangareddy – 502001'
@@ -78,10 +78,10 @@ export const demoShopkeeperOrders = [
     status: 'Delivered',
     paymentMethod: 'Bank Transfer (NEFT)',
     items: [
-      { name: 'Refined White Crystal Sugar (25 KG Bag)', unit: '25kg Bag', price: 980, quantity: 8 },
-      { name: 'Chakki Fresh Wheat Atta (10 KG Bag)', unit: '10kg Bag', price: 420, quantity: 12 },
-      { name: 'Pure Salem Turmeric Powder (1 KG)', unit: '1kg Pouch', price: 190, quantity: 15 },
-      { name: 'Guntur Red Chilli Powder (1 KG)', unit: '1kg Pouch', price: 245, quantity: 10 }
+      { name: 'Refined White Crystal Sugar (25 KG Bag)', unit: '25kg Bag', price: 980, quantity: 8, image: 'https://images.unsplash.com/photo-1622484210800-885107928904?auto=format&fit=crop&w=300&q=80' },
+      { name: 'Chakki Fresh Wheat Atta (10 KG Bag)', unit: '10kg Bag', price: 420, quantity: 12, image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=300&q=80' },
+      { name: 'Pure Salem Turmeric Powder (1 KG)', unit: '1kg Pouch', price: 190, quantity: 15, image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=300&q=80' },
+      { name: 'Guntur Red Chilli Powder (1 KG)', unit: '1kg Pouch', price: 245, quantity: 10, image: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=300&q=80' }
     ],
     totalAmount: 18180,
     shippingAddress: 'Sri Sai Kirana Mart, Shop #4, Market Yard, Sangareddy – 502001'
@@ -94,9 +94,9 @@ export const demoShopkeeperOrders = [
     status: 'Delivered',
     paymentMethod: 'UPI / PhonePe',
     items: [
-      { name: 'Premium Basmati Rice (25 KG Bag)', unit: '25kg Bag', price: 2800, quantity: 5 },
-      { name: 'Pure Desi Cow Ghee (1 L Tin)', unit: '1L Tin', price: 580, quantity: 20 },
-      { name: 'California Almonds (1 KG Pack)', unit: '1kg Pack', price: 820, quantity: 5 }
+      { name: 'Premium Basmati Rice (25 KG Bag)', unit: '25kg Bag', price: 2800, quantity: 5, image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=300&q=80' },
+      { name: 'Pure Desi Cow Ghee (1 L Tin)', unit: '1L Tin', price: 580, quantity: 20, image: 'https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?auto=format&fit=crop&w=300&q=80' },
+      { name: 'California Almonds (1 KG Pack)', unit: '1kg Pack', price: 820, quantity: 5, image: 'https://images.unsplash.com/photo-1508061252966-17387f8b51d9?auto=format&fit=crop&w=300&q=80' }
     ],
     totalAmount: 29700,
     shippingAddress: 'Sri Sai Kirana Mart, Shop #4, Market Yard, Sangareddy – 502001'
