@@ -1,12 +1,14 @@
 import { create } from 'zustand';
+import { products as initialProducts } from '../data/products';
+import { categories as initialCategories } from '../data/categories';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
 
 export const useStoreData = create((set) => ({
-  products: [],
-  categories: [],
+  products: initialProducts,
+  categories: initialCategories,
   offers: [],
-  loading: true,
+  loading: false,
   fetchData: async () => {
     try {
       set({ loading: true });
@@ -20,14 +22,18 @@ export const useStoreData = create((set) => ({
       const offerData = await offerRes.json();
       
       set({ 
-        products: prodData.products || [], 
-        categories: catData.categories || [],
+        products: (prodData.products && prodData.products.length > 0) ? prodData.products : initialProducts, 
+        categories: (catData.categories && catData.categories.length > 0) ? catData.categories : initialCategories,
         offers: offerData.offers || [],
         loading: false 
       });
     } catch (err) {
-      console.error("Failed to fetch store data:", err);
-      set({ loading: false });
+      // Offline / fallback to demo catalogue for UI testing
+      set({ 
+        products: initialProducts,
+        categories: initialCategories,
+        loading: false 
+      });
     }
   }
 }));

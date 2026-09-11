@@ -1,6 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Heart, ShoppingCart, Star, Flame, Sparkles, Circle, Gift, Wind, Bell, Droplet, Flower2, Cloud, Grid, Package, MapPin, Globe, Users, Store } from 'lucide-react';
+import { 
+  Search, Heart, ShoppingCart, Star, Package, MapPin, Globe, 
+  Users, Store, ShieldCheck, Truck, Utensils, Award, CheckCircle2,
+  Droplet, Flame, Grid, Circle, Sparkles, Cloud, Gift, Wind, Bell
+} from 'lucide-react';
 import { Header } from '../components/Header';
 import { ProductCard } from '../components/ProductCard';
 import { useStoreData } from '../store/useStoreData';
@@ -8,142 +12,70 @@ import { useStoreData } from '../store/useStoreData';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
-import imgHeroBanner from '../assets/hero_banner.png';
-import bannerJewelry from '../assets/banner_jewelry.jpg';
-import imgMeditation from '../assets/story_meditation.png';
-import imgAarti from '../assets/story_aarti.png';
-
-// Inline Instagram icon (not available in this version of lucide-react)
-function InstagramIcon({ className, style }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="0.01" fill="currentColor" stroke="currentColor" strokeWidth="3" />
-    </svg>
-  );
-}
-// ── Count-up hook (triggers when element enters viewport) ────────────────────
-function useCountUp(target, duration = 1800, suffix = '') {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const started = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true;
-          const start = performance.now();
-          const step = (now) => {
-            const progress = Math.min((now - start) / duration, 1);
-            // Ease out cubic
-            const ease = 1 - Math.pow(1 - progress, 3);
-            setCount(Math.floor(ease * target));
-            if (progress < 1) requestAnimationFrame(step);
-            else setCount(target);
-          };
-          requestAnimationFrame(step);
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [target, duration]);
-
-  return { count, ref };
-}
-
-// ── Individual stat tile ─────────────────────────────────────────────────────
-function StatTile({ icon: Icon, target, prefix = '', suffix = '', label, link, color = '#D4AF37', decimals = 0 }) {
-  const { count, ref } = useCountUp(Math.round(target * Math.pow(10, decimals)), 2000);
-  const displayVal = decimals > 0
-    ? (count / Math.pow(10, decimals)).toFixed(decimals)
-    : count;
-
-  const inner = (
-    <div ref={ref} className="flex flex-col items-center gap-2 group cursor-default">
-      <div
-        className="w-12 h-12 rounded-full flex items-center justify-center mb-1 shadow-lg transition-transform duration-300 group-hover:scale-110"
-        style={{ background: `${color}18`, border: `1.5px solid ${color}50` }}
-      >
-        <Icon className="w-5 h-5" style={{ color }} />
-      </div>
-      <div className="text-2xl md:text-3xl font-black text-white tracking-tight leading-none">
-        {prefix}{displayVal}{suffix}
-      </div>
-      <div className="text-[11px] md:text-xs font-semibold text-white/60 text-center leading-snug max-w-[100px]">{label}</div>
-    </div>
-  );
-
-  if (link) {
-    return (
-      <a href={link} target="_blank" rel="noopener noreferrer" className="contents">
-        <div ref={ref} className="flex flex-col items-center gap-2 group cursor-pointer">
-          <div
-            className="w-12 h-12 rounded-full flex items-center justify-center mb-1 shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:ring-2 ring-offset-2 ring-offset-[#0d1f3f]"
-            style={{ background: `${color}25`, border: `1.5px solid ${color}80`, ringColor: color }}
-          >
-            <Icon className="w-5 h-5" style={{ color }} />
-          </div>
-          <div className="text-2xl md:text-3xl font-black text-white tracking-tight leading-none group-hover:underline underline-offset-2">
-            {prefix}{displayVal}{suffix}
-          </div>
-          <div className="text-[11px] md:text-xs font-semibold text-white/60 text-center leading-snug max-w-[100px] group-hover:text-white/90 transition-colors">{label}</div>
-        </div>
-      </a>
-    );
-  }
-  return inner;
-}
-
-// ── Stats banner ─────────────────────────────────────────────────────────────
-function StatsBanner() {
-  const stats = [
-    { icon: InstagramIcon, target: 12.6, decimals: 1, suffix: 'K', label: 'Instagram Family', color: '#E1306C', link: 'https://www.instagram.com/' },
-    { icon: Package, target: 10, suffix: 'K+', label: 'Groceries Delivered', color: '#D4AF37' },
-    { icon: MapPin, target: 500, suffix: '+', label: 'Store Pickups', color: '#60a5fa' },
-    { icon: Globe, target: 50, suffix: '+', label: 'Neighborhoods Served', color: '#34d399' },
-    { icon: Users, target: 5, suffix: 'K+', label: 'Happy Customers', color: '#f472b6' },
-    { icon: Store, target: 5000, suffix: '+', label: 'Fresh Products', color: '#a78bfa' },
+// ── Service & Trust Highlights (Authentic to UP Traders) ──────────────────────
+function ServiceHighlights() {
+  const services = [
+    {
+      icon: Store,
+      title: 'Complete Grocery Range',
+      subtitle: 'Rice, oil, ghee, pulses, spices & all FMCG items',
+      color: '#1B7A2B',
+      link: '/category/all'
+    },
+    {
+      icon: ShieldCheck,
+      title: 'Bulk Orders',
+      subtitle: 'Wholesale & volume supply with special offers',
+      color: '#FF9800',
+      link: '/bulk-orders'
+    },
+    {
+      icon: Utensils,
+      title: 'Function Orders',
+      subtitle: 'Provisions for weddings, parties & community events',
+      color: '#D4AF37',
+      link: '/function-orders'
+    },
+    {
+      icon: Truck,
+      title: 'Fast Local Delivery',
+      subtitle: '1-Hour Delivery* in selected service areas',
+      color: '#156321',
+      link: '/contact'
+    },
   ];
 
   return (
-    <div className="animate-section md:px-8 mb-4 md:mb-10">
-      <div
-        className="relative md:rounded-2xl rounded-[24px] md:overflow-hidden py-10 px-2 md:px-10 mx-4 md:mx-0"
-        style={{
-          background: 'linear-gradient(135deg, #1B7A2B 0%, #0E5B1C 60%, #1B7A2B 100%)',
-          boxShadow: '0 8px 40px rgba(27,122,43,0.35), inset 0 1px 0 rgba(255,255,255,0.15)'
-        }}
-      >
-        {/* Decorative gold top border */}
-        <div className="hidden md:block absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #D4AF37, transparent)' }} />
-        {/* Subtle pattern */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #D4AF37 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-
-        <div className="relative z-10">
-          {/* Heading */}
-          <div className="text-center mb-8">
-            <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-brand-orange mb-1">Serving Our Community</p>
-            <h2 className="font-serif text-xl md:text-2xl font-bold text-white">Trusted by Thousands Every Day</h2>
-          </div>
-
-          {/* Stats grid */}
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-6 md:gap-4">
-            {stats.map((s, i) => (
-              <StatTile key={i} {...s} />
-            ))}
-          </div>
-        </div>
-
-        {/* Decorative gold bottom border */}
-        <div className="hidden md:block absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #D4AF37, transparent)' }} />
+    <div className="animate-section px-4 md:px-24 mb-8 md:mb-12">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
+        {services.map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <Link
+              key={i}
+              to={s.link}
+              className="bg-white border border-green-900/10 rounded-2xl p-4 md:p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col items-start gap-2.5 group"
+            >
+              <div 
+                className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
+                style={{ backgroundColor: `${s.color}15`, color: s.color }}
+              >
+                <Icon className="w-5 h-5 md:w-6 md:h-6" />
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900 text-xs md:text-sm leading-tight flex items-center gap-1 group-hover:text-brand-red transition-colors">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-brand-red shrink-0 hidden md:inline" />
+                  {s.title}
+                </h4>
+                <p className="text-[11px] md:text-xs text-gray-500 mt-1 leading-snug">
+                  {s.subtitle}
+                </p>
+              </div>
+            </Link>
+          );
+        })}
       </div>
-   </div>
+    </div>
   );
 }
 
@@ -169,7 +101,7 @@ export function HomePage() {
       .catch(e => console.error(e));
   }, []);
 
-  // Auto-scroll reviews
+  // Auto-scroll reviews if available
   React.useEffect(() => {
     const track = reviewTrackRef.current;
     if (!track || reviews.length === 0) return;
@@ -206,53 +138,52 @@ export function HomePage() {
     }, 4000);
     return () => clearInterval(interval);
   }, [banners.length]);
+
   useGSAP(() => {
     if (!loading) {
       gsap.from('.animate-section', {
-        y: 40,
+        y: 30,
         opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
+        duration: 0.7,
+        stagger: 0.12,
         ease: 'power3.out',
         clearProps: 'all'
       });
     }
   }, { scope: container, dependencies: [loading] });
 
-  const featuredProducts = products.slice(0, 5);
-
   return (
     <div ref={container} className="bg-brand-beige flex-grow w-full flex flex-col pb-8">
       <Header variant="home" />
 
-      {/* Mobile Top Section (Yellow bg + Red Banner) */}
-      <div className="md:hidden bg-[#FFC107] pt-[140px] pb-12 px-4 relative flex flex-col items-center">
+      {/* Mobile Top Hero Section */}
+      <div className="md:hidden bg-[#FFC107] pt-[140px] pb-10 px-4 relative flex flex-col items-center">
         {banners.length > 0 ? (
-          <div className="relative w-full h-[180px] rounded-[20px] overflow-hidden shadow-xl bg-gradient-to-br from-[#1B7A2B] to-[#0E5B1C]">
+          <div className="relative w-full h-[185px] rounded-[20px] overflow-hidden shadow-xl bg-gradient-to-br from-[#1B7A2B] to-[#156321]">
             <div
               className="flex h-full transition-transform duration-700 ease-in-out"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
               {banners.map((banner) => (
                 <div key={banner.id} className="relative w-full h-full shrink-0">
-                  <div className="absolute inset-0 flex flex-col justify-center px-6 z-10 w-[65%]">
-                    <h2 className="text-white text-xl font-serif font-bold leading-tight mb-3 drop-shadow-md">
+                  <div className="absolute inset-0 flex flex-col justify-center px-5 z-10 w-[65%]">
+                    <h2 className="text-white text-lg font-serif font-bold leading-tight mb-2 drop-shadow-md">
                       {banner.title}
                     </h2>
                     {(banner.link_url || banner.link_url === '') && (
-                      <Link to={banner.link_url || "/category/all"} className="bg-[#FFC107] text-[#0E5B1C] text-[10px] font-extrabold px-5 py-2 rounded-lg w-fit shadow-md">
+                      <Link to={banner.link_url || "/category/all"} className="bg-[#FFC107] text-[#156321] text-[10px] font-extrabold px-4 py-2 rounded-lg w-fit shadow-md">
                         Shop Now
                       </Link>
                     )}
                   </div>
-                  <div className="absolute right-0 bottom-0 h-full w-[60%] z-0">
+                  <div className="absolute right-0 bottom-0 h-full w-[55%] z-0">
                      <img src={banner.image_url} alt={banner.title} className="w-full h-full object-cover object-left" style={{ WebkitMaskImage: 'linear-gradient(to left, black 40%, transparent)', maskImage: 'linear-gradient(to left, black 40%, transparent)' }} />
                   </div>
                 </div>
               ))}
             </div>
             {banners.length > 1 && (
-              <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-20">
+              <div className="absolute bottom-2.5 left-0 right-0 flex justify-center gap-1.5 z-20">
                 {banners.map((_, i) => (
                   <button
                     key={i}
@@ -264,124 +195,140 @@ export function HomePage() {
             )}
           </div>
         ) : (
-          <div className="relative w-full h-[180px] rounded-[20px] overflow-hidden shadow-xl bg-gradient-to-br from-[#1B7A2B] to-[#0E5B1C]">
-            <div className="absolute inset-0 flex flex-col justify-center px-6 z-10 w-[65%]">
-              <h2 className="text-white text-2xl font-serif font-bold leading-tight mb-1.5 drop-shadow-md">
-                Freshness<br />Delivered Daily
+          <div className="relative w-full h-[185px] rounded-[20px] overflow-hidden shadow-xl bg-gradient-to-br from-[#1B7A2B] to-[#156321]">
+            <div className="absolute inset-0 flex flex-col justify-center px-5 z-10 w-[68%]">
+              <span className="text-brand-yellow text-[9px] font-extrabold tracking-widest uppercase mb-1">
+                Complete Grocery Store
+              </span>
+              <h2 className="text-white text-xl font-serif font-bold leading-tight mb-1.5 drop-shadow-md">
+                Your Complete<br />Grocery Store
               </h2>
-              <p className="text-brand-yellow text-[11px] font-semibold mb-4 opacity-90 tracking-wide">
-                From our store to your door
+              <p className="text-white/85 text-[10px] font-medium mb-3 line-clamp-2 leading-tight">
+                Rice, pulses, oil, ghee, spices, grains & everyday FMCG essentials.
               </p>
-              <Link to="/category/all" className="bg-[#FFC107] text-[#0E5B1C] text-[10px] font-extrabold px-5 py-2 rounded-lg w-fit shadow-md">
-                Shop Now
-              </Link>
+              <div className="flex gap-2">
+                <Link to="/category/all" className="bg-[#FFC107] text-[#156321] text-[9.5px] font-black px-3.5 py-1.5 rounded-lg shadow-md uppercase tracking-wider">
+                  Shop Now
+                </Link>
+                <Link to="/bulk-orders" className="bg-white/20 text-white text-[9.5px] font-bold px-3 py-1.5 rounded-lg border border-white/40 uppercase tracking-wider">
+                  Bulk Orders
+                </Link>
+              </div>
             </div>
-            <div className="absolute right-0 bottom-0 h-full w-[50%] z-0">
-               <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop" alt="Fruit Basket" className="w-full h-full object-cover object-left" style={{ WebkitMaskImage: 'linear-gradient(to left, black 40%, transparent)', maskImage: 'linear-gradient(to left, black 40%, transparent)' }} />
+            <div className="absolute right-0 bottom-0 h-full w-[48%] z-0">
+               <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=80" alt="Groceries" className="w-full h-full object-cover object-center" style={{ WebkitMaskImage: 'linear-gradient(to left, black 30%, transparent)', maskImage: 'linear-gradient(to left, black 30%, transparent)' }} />
             </div>
           </div>
         )}
       </div>
 
-      {/* Content wrapper with rounded top on mobile */}
-      <div className="md:max-w-full mx-auto w-full pb-20 bg-white md:bg-transparent rounded-t-3xl md:rounded-none -mt-8 md:mt-0 relative z-10 pt-6 md:pt-0">
+      {/* Content wrapper */}
+      <div className="md:max-w-full mx-auto w-full pb-20 bg-white md:bg-transparent rounded-t-3xl md:rounded-none -mt-6 md:mt-0 relative z-10 pt-6 md:pt-0">
 
-        {/* Desktop Banner Section (hidden on mobile) */}
-        <div className="hidden md:block animate-section py-8">
+        {/* Desktop Banner Section */}
+        <div className="hidden md:block animate-section py-6">
           {banners.length > 0 ? (
-          <div className="relative w-full md:w-[75%] h-48 md:h-[400px] rounded-2xl overflow-hidden shadow-lg border border-gray-100 mx-auto px-4 md:px-0">
-            <div
-              className="flex h-full transition-transform duration-700 ease-in-out"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {banners.map((banner) => (
-                <div key={banner.id} className="relative w-full h-full shrink-0">
-                  <img src={banner.image_url} alt={banner.title} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent flex flex-col justify-center px-6 md:px-16">
-                    <h2 className="text-white text-2xl md:text-5xl font-bold mb-4 leading-tight font-serif tracking-wide drop-shadow-lg">
-                      {banner.title}
-                    </h2>
-                    {(banner.link_url || banner.link_url === '') && (
-                      <Link to={banner.link_url || "/category/all"} className="bg-white text-brand-red text-xs md:text-base font-bold px-8 py-3 md:py-4 rounded-xl w-fit shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all">
-                        SHOP NOW
-                      </Link>
-                    )}
+            <div className="relative w-full md:w-[85%] lg:w-[75%] h-56 md:h-[380px] rounded-2xl overflow-hidden shadow-lg border border-gray-100 mx-auto px-4 md:px-0">
+              <div
+                className="flex h-full transition-transform duration-700 ease-in-out"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                {banners.map((banner) => (
+                  <div key={banner.id} className="relative w-full h-full shrink-0">
+                    <img src={banner.image_url} alt={banner.title} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-16">
+                      <h2 className="text-white text-2xl md:text-5xl font-bold mb-4 leading-tight font-serif tracking-wide drop-shadow-lg">
+                        {banner.title}
+                      </h2>
+                      {(banner.link_url || banner.link_url === '') && (
+                        <div className="flex gap-4">
+                          <Link to={banner.link_url || "/category/all"} className="bg-[#1B7A2B] text-white text-xs md:text-sm font-bold px-7 py-3 rounded-xl shadow-xl hover:bg-[#156321] transition-all">
+                            SHOP NOW
+                          </Link>
+                          <Link to="/bulk-orders" className="bg-white text-gray-900 text-xs md:text-sm font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-gray-100 transition-all">
+                            ORDER IN BULK
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Slider Dots */}
+              <div className="absolute bottom-4 md:bottom-6 left-0 right-0 flex justify-center gap-2">
+                {banners.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentSlide(i)}
+                    className={`h-1.5 md:h-2 rounded-full transition-all ${i === currentSlide ? 'bg-white w-6 md:w-8' : 'bg-white/50 w-1.5 md:w-2 hover:bg-white/80'}`}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center px-4 md:px-24 pt-2 md:pt-4 pb-2">
+              <div className="relative w-full h-80 md:h-[380px] rounded-[24px] overflow-hidden shadow-xl border border-green-900/10 bg-[#FDF8F0] group">
+                <div className="absolute inset-0 z-0">
+                  <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=1600&auto=format&fit=crop&q=80" alt="UP Traders Grocery Collection" className="w-full h-full object-cover object-right transition-transform duration-1000 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#FDF8F0] via-[#FDF8F0]/95 md:via-[#FDF8F0]/90 to-transparent z-10 pointer-events-none w-full md:w-[75%]"></div>
+                </div>
+
+                {/* Content */}
+                <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-14 z-10 w-[85%] md:w-[65%]">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-800 text-[11px] font-extrabold uppercase tracking-wider w-fit mb-3">
+                    Sangareddy's Trusted Grocery Store
+                  </div>
+                  <h1 className="text-gray-900 text-3xl md:text-5xl font-bold mb-3 md:mb-4 leading-[1.15] font-serif tracking-tight">
+                    Your Complete<br />
+                    <span className="text-[#1B7A2B]">Grocery Store</span>
+                  </h1>
+                  <p className="text-gray-700 text-xs md:text-sm lg:text-[15px] mb-6 md:mb-7 max-w-md leading-relaxed font-medium">
+                    Rice, pulses, oil, ghee, spices, grains and everyday FMCG essentials delivered to your doorstep.
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <Link to="/category/all" className="bg-[#1B7A2B] hover:bg-[#156321] text-white text-xs md:text-sm font-bold px-7 py-3 md:px-8 md:py-3.5 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all tracking-wider uppercase">
+                      SHOP NOW
+                    </Link>
+                    <Link to="/bulk-orders" className="bg-white hover:bg-gray-50 text-[#1B7A2B] border-2 border-[#1B7A2B] text-xs md:text-sm font-bold px-6 py-3 md:px-7 md:py-3 rounded-xl shadow-sm hover:shadow-md transition-all tracking-wider uppercase">
+                      ORDER IN BULK
+                    </Link>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Slider Dots */}
-            <div className="absolute bottom-4 md:bottom-6 left-0 right-0 flex justify-center gap-2">
-              {banners.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentSlide(i)}
-                  className={`h-1.5 md:h-2 rounded-full transition-all ${i === currentSlide ? 'bg-white w-6 md:w-8' : 'bg-white/50 w-1.5 md:w-2 hover:bg-white/80'}`}
-                />
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="flex justify-center px-4 md:px-24 pt-2 md:pt-6 pb-2">
-            <div className="relative w-full h-72 md:h-[360px] rounded-[24px] overflow-hidden shadow-2xl border border-brand-red/10 bg-brand-beige group">
-              <div className="absolute inset-0 z-0">
-                <img src="https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Supermarket Collection" className="w-full h-full object-cover object-right transition-transform duration-1000 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#FDF8F0] via-[#FDF8F0]/95 to-[#FDF8F0]/0 z-10 pointer-events-none w-full md:w-[80%]"></div>
-              </div>
-
-              {/* Content */}
-              <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-12 z-10 w-[70%]">
-                <h2 className="text-gray-900 text-2xl md:text-4xl lg:text-[40px] font-bold mb-3 md:mb-4 leading-[1.2] font-serif tracking-wide drop-shadow-sm">
-                  Fresh Groceries,<br />
-<span className="text-gray-900/80 font-light">Delivered Daily</span>
-                </h2>
-                <p className="text-gray-600 text-xs md:text-sm lg:text-[15px] mb-6 md:mb-8 max-w-[280px] md:max-w-sm leading-relaxed">
-                  Shop farm-fresh fruits, vegetables, and everyday essentials.
-                </p>
-                <Link to="/category/all" className="bg-brand-red text-white text-[11px] md:text-xs font-bold px-6 py-3 md:px-8 md:py-3.5 rounded-xl w-fit shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all hover:bg-brand-orange text-white tracking-wider uppercase">
-                  SHOP NOW
-                </Link>
               </div>
             </div>
-          </div>
-        )}
+          )}
         </div>
+
+        {/* ── Service / Trust Highlights ─────────────────────────────────── */}
+        <ServiceHighlights />
 
         {/* Categories Grid */}
         <div className="animate-section px-4 md:px-24 mb-10">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-serif text-xl md:text-2xl text-gray-900">Shop by Category</h3>
-            <Link to="/category/all" className="text-sm font-semibold text-brand-accent flex items-center gap-1">View All <span className="text-lg leading-none">&rsaquo;</span></Link>
+            <div>
+              <h2 className="font-serif text-xl md:text-2xl font-bold text-gray-900">Shop by Category</h2>
+              <p className="text-xs text-gray-500 mt-0.5">Explore our wide selection of groceries & daily provisions</p>
+            </div>
+            <Link to="/category/all" className="text-sm font-bold text-brand-red flex items-center gap-1 hover:underline">
+              View All <span className="text-lg leading-none">&rsaquo;</span>
+            </Link>
           </div>
+
           <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-y-6 gap-x-3">
             {categories.map((cat) => {
-              const IconMap = {
-                Flame,
-                Sparkles,
-                Circle,
-                Gift,
-                Wind,
-                Bell,
-                Droplet,
-                Flower2,
-                Cloud,
-                Grid
-              };
-              const Icon = IconMap[cat.icon] || Star;
-
               return (
                 <Link key={cat.id} to={`/category/${cat.id}`} className="group flex flex-col items-center gap-2">
-                  <div className="w-[72px] h-[72px] md:w-32 md:h-32 rounded-full overflow-hidden shadow-sm hover:shadow-md bg-white border border-gray-100 p-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+                  <div className="w-[72px] h-[72px] md:w-28 md:h-28 rounded-full overflow-hidden shadow-xs hover:shadow-md bg-white border border-gray-100 p-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-105 group-hover:ring-2 group-hover:ring-brand-yellow">
                     <div className="w-full h-full rounded-full overflow-hidden bg-gray-50 flex items-center justify-center">
                       {cat.image_url ? (
                         <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover" />
                       ) : (
-                        <Star className="w-6 h-6 text-brand-red" />
+                        <Package className="w-6 h-6 text-brand-red" />
                       )}
                     </div>
                   </div>
-                  <span className="text-[10px] md:text-sm font-semibold text-gray-800 text-center leading-tight line-clamp-2 px-1 max-w-[80px] md:max-w-full">
+                  <span className="text-[10px] md:text-xs font-semibold text-gray-800 text-center leading-tight line-clamp-2 px-1 max-w-[80px] md:max-w-[110px] group-hover:text-brand-red transition-colors">
                     {cat.name}
                   </span>
                 </Link>
@@ -390,20 +337,20 @@ export function HomePage() {
           </div>
         </div>
 
-        {/* ── Stats Banner (Moved here for mobile) ─────────────────────────────────────── */}
-        <StatsBanner />
-
         {/* Trending Products */}
         {products.filter(p => p.is_trending).length > 0 && (
-          <div className="animate-section mb-8">
+          <div className="animate-section mb-10">
             <div className="flex justify-between items-center mb-4 px-4 md:px-24">
-              <h3 className="font-bold text-gray-900">Trending Products</h3>
-              <Link to="/category/all" className="text-xs font-semibold text-brand-orange">View all</Link>
+              <div>
+                <h3 className="font-serif font-bold text-lg md:text-xl text-gray-900">Daily Grocery Essentials</h3>
+                <p className="text-xs text-gray-500">Popular staples chosen by local households</p>
+              </div>
+              <Link to="/category/all" className="text-xs font-bold text-brand-red hover:underline">View all</Link>
             </div>
 
             <div className="flex gap-4 overflow-x-auto hide-scrollbar px-4 md:px-24 pb-2 md:grid md:grid-cols-4 lg:grid-cols-5 md:overflow-visible">
               {products.filter(p => p.is_trending).slice(0, 5).map(product => (
-                <div key={product.id} className="w-[140px] md:w-auto shrink-0 hover:-translate-y-1 transition-transform">
+                <div key={product.id} className="w-[160px] md:w-auto shrink-0 hover:-translate-y-1 transition-transform">
                   <ProductCard product={product} />
                 </div>
               ))}
@@ -411,67 +358,43 @@ export function HomePage() {
           </div>
         )}
 
-        {/* Special Offers / Premium Collection Banner */}
-        {/* <div className="animate-section px-4 md:px-24 mb-12 flex justify-center mt-8">
-          <div className="relative w-full h-32 md:h-[300px] rounded-[24px] overflow-hidden shadow-lg border border-brand-red/10 group">
-            <div className="absolute inset-0 z-0">
-              <img src="https://images.pexels.com/photos/1458867/pexels-photo-1458867.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Jewelry Offers" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-r from-brand-dark-blue via-brand-dark-blue/90 to-brand-dark-blue/0 z-10 pointer-events-none w-full md:w-[70%]"></div>
+        {/* Festive / Bulk Special Banner */}
+        <div className="animate-section px-4 md:px-24 mb-10">
+          <div className="relative w-full rounded-2xl overflow-hidden shadow-lg bg-gradient-to-r from-[#1B7A2B] to-[#156321] text-white p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="max-w-xl">
+              <span className="bg-[#FFC107] text-[#156321] text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-3 inline-block">
+                Special Event & Bulk Supply
+              </span>
+              <h3 className="text-2xl md:text-3xl font-serif font-bold mb-2">
+                Planning a Function or Need Bulk Groceries?
+              </h3>
+              <p className="text-white/80 text-xs md:text-sm leading-relaxed mb-4">
+                We accept wholesale, catering, marriage and event grocery orders with doorstep delivery in Sangareddy.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link to="/bulk-orders" className="bg-[#FFC107] hover:bg-[#ffca28] text-[#156321] text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all uppercase tracking-wider">
+                  Bulk Inquiry
+                </Link>
+                <Link to="/function-orders" className="bg-white/15 hover:bg-white/25 text-white border border-white/40 text-xs font-bold px-5 py-2.5 rounded-xl transition-all uppercase tracking-wider">
+                  Function Orders
+                </Link>
+              </div>
             </div>
-            
-            <div className="absolute inset-0 z-20 flex flex-col justify-center px-6 md:px-12 pointer-events-none">
-              <div className="bg-brand-red text-white text-gray-900 text-[10px] md:text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full w-fit mb-3 drop-shadow-sm pointer-events-auto">Today's Offers</div>
-              <h2 className="text-white text-xl md:text-4xl font-bold mb-4 leading-tight font-serif drop-shadow-md">
-                Get up to 50% OFF<br />on Diamond Collections
-              </h2>
-              <Link to="/category/all" className="bg-brand-red text-white text-gray-900 text-[10px] md:text-sm font-bold px-6 py-2.5 md:px-8 md:py-3 rounded-xl w-fit hover:bg-white hover:scale-105 shadow-lg shadow-brand-gold/20 transition-all pointer-events-auto">
-                SHOP OFFERS
-              </Link>
-            </div>
-          </div>
-        </div> */}
-
-        {/* Festive Collection */}
-        {products.filter(p => p.is_festive).length > 0 && (
-          <div className="animate-section mb-8 px-4 md:px-24">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-gray-900">Festive Collection</h3>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
-              {products.filter(p => p.is_festive).slice(0, 5).map(product => (
-                <div key={product.id} className="hover:-translate-y-1 transition-transform">
-                  <ProductCard product={product} />
-                </div>
-              ))}
+            <div className="hidden md:block w-48 h-36 shrink-0 rounded-xl overflow-hidden border-2 border-white/20 shadow-lg">
+              <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80" alt="Bulk Groceries" className="w-full h-full object-cover" />
             </div>
           </div>
-        )}
-
-        {/* StatsBanner moved above */}
-
-        {/* Offers Section */}
-        {products.filter(p => p.is_offer).length > 0 && (
-          <div className="animate-section mb-8 px-4 md:px-24">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-gray-900">Special Offers</h3>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
-              {products.filter(p => p.is_offer).slice(0, 5).map(product => (
-                <div key={product.id} className="hover:-translate-y-1 transition-transform">
-                  <ProductCard product={product} />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        </div>
 
         {/* Best Sellers */}
         {products.filter(p => p.is_bestseller).length > 0 && (
-          <div className="animate-section mb-8 px-4 md:px-24">
+          <div className="animate-section mb-10 px-4 md:px-24">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-gray-900">Best Sellers</h3>
+              <div>
+                <h3 className="font-serif font-bold text-lg md:text-xl text-gray-900">Best Sellers</h3>
+                <p className="text-xs text-gray-500">Highest quality staples and FMCG products</p>
+              </div>
+              <Link to="/category/all" className="text-xs font-bold text-brand-red hover:underline">View all</Link>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
@@ -484,11 +407,11 @@ export function HomePage() {
           </div>
         )}
 
-        {/* Customer Reviews — auto-scroll */}
+        {/* Customer Reviews if provided by backend */}
         {reviews.length > 0 && (
           <section className="mb-4 overflow-hidden">
             <div className="px-4 md:px-24 mb-6">
-              <h3 className="font-serif font-bold text-2xl text-gray-900">What Our Clients Say</h3>
+              <h3 className="font-serif font-bold text-2xl text-gray-900">Customer Feedback</h3>
             </div>
 
             <div className="overflow-hidden w-full">
@@ -497,24 +420,22 @@ export function HomePage() {
                 className="flex gap-5 will-change-transform"
                 style={{ width: 'max-content' }}
               >
-                {/* Duplicate for seamless loop */}
                 {[...reviews, ...reviews].map((rev, idx) => (
-                  <div key={idx} className="w-[260px] md:w-[300px] p-6 shrink-0 bg-white border border-brand-red/10 rounded-[20px] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-[200px]">
+                  <div key={idx} className="w-[260px] md:w-[300px] p-6 shrink-0 bg-white border border-gray-100 rounded-[20px] shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-[180px]">
                     <div>
-                      <div className="flex text-[#FFC107] mb-3">
+                      <div className="flex text-[#FFC107] mb-2">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className={`w-4 h-4 ${i < (rev.rating || 5) ? 'fill-current' : 'text-gray-300'}`} />
                         ))}
                       </div>
-                      <p className="text-gray-700 italic text-sm line-clamp-3">"{rev.comment || 'Great experience with the products and fast delivery!'}"</p>
+                      <p className="text-gray-700 italic text-sm line-clamp-3">"{rev.comment}"</p>
                     </div>
-                    <div className="mt-4 flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-500">
-                        {(rev.name || 'G').charAt(0).toUpperCase()}
+                    <div className="mt-2 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-green-100 text-[#1B7A2B] flex items-center justify-center font-bold text-xs">
+                        {(rev.name || 'C').charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900 text-sm">{rev.name || 'Guest User'}</p>
-                        <p className="text-[10px] text-gray-400 uppercase tracking-wider">Verified Buyer</p>
+                        <p className="font-bold text-gray-900 text-xs">{rev.name || 'Customer'}</p>
                       </div>
                     </div>
                   </div>
@@ -525,7 +446,6 @@ export function HomePage() {
         )}
 
       </div>
-
     </div>
   );
 }

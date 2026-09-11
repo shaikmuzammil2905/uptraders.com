@@ -18,7 +18,7 @@ export function SplashScreen({ onComplete }) {
 
     // Logo pops in
     tl.from(logoGroup.current, {
-      scale: 0.7,
+      scale: 0.8,
       opacity: 0,
       duration: 0.8,
       ease: 'back.out(1.7)'
@@ -26,19 +26,19 @@ export function SplashScreen({ onComplete }) {
 
     // Tagline fades up
     tl.from(taglineRef.current, {
-      y: 16,
+      y: 12,
       opacity: 0,
       duration: 0.5,
       ease: 'power2.out'
-    }, '-=0.3');
+    }, '-=0.2');
 
     // Hold for a moment
-    tl.to({}, { duration: 1.5 });
+    tl.to({}, { duration: 1.2 });
 
     // Fade everything out
     tl.to(container.current, {
       opacity: 0,
-      duration: 0.7,
+      duration: 0.6,
       ease: 'power2.inOut'
     });
 
@@ -47,73 +47,34 @@ export function SplashScreen({ onComplete }) {
   return (
     <div
       ref={container}
-      className="fixed inset-0 z-[100] flex flex-col items-center w-full h-full overflow-hidden"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center w-full h-full overflow-hidden bg-[#FDF8F0]"
     >
-      {/* Full-screen background image — basket is baked in, no seams */}
+      {/* Background pattern or subtle gradient */}
       <img
         src={splashBg}
         alt=""
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover opacity-90 pointer-events-none"
         style={{ zIndex: 0 }}
       />
 
       {/* Content overlay */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-8 w-full" style={{ paddingBottom: '40vh' }}>
+      <div className="relative z-10 flex flex-col items-center justify-center px-6 w-full max-w-sm text-center">
         <div ref={logoGroup} className="flex flex-col items-center">
-          {/* Logo */}
+          {/* Logo with preserved aspect ratio */}
           <img
             src={logoImg}
-            alt="UP Traders Logo"
-            className="object-contain mb-3"
-            style={{
-              width: '140px',
-              height: '140px',
-              mixBlendMode: 'multiply',
-              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))'
-            }}
+            alt="UP Traders - Complete Grocery Store"
+            className="w-56 md:w-64 h-auto object-contain drop-shadow-xl"
           />
-
-          {/* Brand Name */}
-          <span
-            style={{
-              color: '#1E8233',
-              fontFamily: "'Georgia', serif",
-              fontSize: 'clamp(28px, 9vw, 44px)',
-              fontWeight: '900',
-              letterSpacing: '0.04em',
-              lineHeight: 1.1,
-              textShadow: '0 2px 8px rgba(0,0,0,0.10)'
-            }}
-          >
-            UP TRADERS
-          </span>
-          <span
-            style={{
-              color: '#1E8233',
-              fontFamily: "'Georgia', serif",
-              fontSize: 'clamp(14px, 4vw, 18px)',
-              fontWeight: '700',
-              letterSpacing: '0.15em',
-              textShadow: '0 1px 4px rgba(0,0,0,0.08)'
-            }}
-          >
-            COMPLETE GROCERY STORE
-          </span>
         </div>
 
-        {/* Tagline */}
-        <p
+        {/* Supporting badge / tagline */}
+        <div
           ref={taglineRef}
-          style={{
-            color: '#5C2A00',
-            fontFamily: "'Georgia', serif",
-            fontSize: 'clamp(16px, 5vw, 22px)',
-            fontWeight: '700',
-            marginTop: '24px'
-          }}
+          className="mt-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-900/10 border border-green-900/20 text-[#1B7A2B] font-bold text-xs md:text-sm tracking-wider uppercase"
         >
-          Freshness Delivered Daily
-        </p>
+          <span>Sangareddy, Telangana</span>
+        </div>
       </div>
     </div>
   );

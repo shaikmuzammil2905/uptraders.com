@@ -343,18 +343,18 @@ export function CartPage() {
               <div className="hidden md:block mt-8 space-y-3">
                 <button
                   onClick={handleCheckout}
-                  className="w-full bg-[#D61A3C] hover:bg-[#b51430] text-white font-bold py-4 rounded-2xl shadow-lg shadow-[#D61A3C]/30 text-lg active:scale-95 transition-all"
+                  className="w-full bg-[#1B7A2B] hover:bg-[#156321] text-white font-bold py-4 rounded-2xl shadow-lg shadow-[#1B7A2B]/25 text-lg active:scale-95 transition-all"
                 >
                   Proceed to Checkout
                 </button>
                 <button
                   onClick={handleWhatsAppCart}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-md text-base transition-all flex items-center justify-center gap-2"
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-2xl shadow-md text-base transition-all flex items-center justify-center gap-2"
                 >
-                  Order Cart via WhatsApp
+                  Order via WhatsApp
                 </button>
-                <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
-                  Secure checkout powered by UP Traders
+                <p className="text-center text-xs text-gray-500 mt-4 flex items-center justify-center gap-1">
+                  UP Traders • 10-34 Malkapur X Road, Sangareddy
                 </p>
               </div>
             </div>
@@ -364,23 +364,31 @@ export function CartPage() {
 
       {/* ── Mobile Sticky Bottom Bar ── */}
       {items.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 z-50 shadow-2xl md:hidden">
-          <div className="flex items-center justify-between gap-4">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-3 py-2.5 z-50 shadow-2xl md:hidden">
+          <div className="flex items-center justify-between gap-2">
             <div>
-              <p className="text-xs text-gray-500 font-medium">To Pay</p>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-xl font-black text-gray-900">₹{grandTotal.toFixed(0)}</span>
+              <p className="text-[10px] text-gray-500 font-medium">To Pay</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-lg font-black text-gray-900">₹{grandTotal.toFixed(0)}</span>
                 {subtotal > grandTotal && (
-                  <span className="text-sm text-gray-400 line-through">₹{subtotal.toFixed(0)}</span>
+                  <span className="text-xs text-gray-400 line-through">₹{subtotal.toFixed(0)}</span>
                 )}
               </div>
             </div>
-            <button
-              onClick={handleCheckout}
-              className="flex-1 bg-[#D61A3C] text-white font-bold py-4 rounded-2xl shadow-lg shadow-[#D61A3C]/30 text-base active:scale-95 transition-transform"
-            >
-              Proceed to Checkout
-            </button>
+            <div className="flex items-center gap-2 flex-1 justify-end">
+              <button
+                onClick={handleWhatsAppCart}
+                className="bg-amber-500 text-white font-bold px-3 py-3 rounded-xl text-xs active:scale-95 transition-transform"
+              >
+                WhatsApp
+              </button>
+              <button
+                onClick={handleCheckout}
+                className="bg-[#1B7A2B] text-white font-bold px-4 py-3 rounded-xl shadow-md text-xs active:scale-95 transition-transform"
+              >
+                Checkout
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -397,31 +405,31 @@ export function CartPage() {
               <button onClick={() => handleDeliveryChoice('shipping')}
                 className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-[#FFC107] hover:bg-[#FFF8E1] transition-all text-left group">
                 <div className="w-12 h-12 bg-[#FFF8E1] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Truck className="w-6 h-6 text-[#D61A3C]" />
+                  <Truck className="w-6 h-6 text-[#1B7A2B]" />
                 </div>
                 <div>
                   <p className="font-bold text-gray-900 md:text-lg">Home Delivery</p>
-                  <p className="text-xs md:text-sm text-gray-500 mt-0.5">Deliver to my address • Shipping fee applies</p>
+                  <p className="text-xs md:text-sm text-gray-500 mt-0.5">Fast local delivery in Sangareddy service areas</p>
                 </div>
               </button>
               <button onClick={() => handleDeliveryChoice('pickup')}
                 className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-[#FFC107] hover:bg-[#FFF8E1] transition-all text-left group">
                 <div className="w-12 h-12 bg-[#FFF8E1] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Store className="w-6 h-6 text-[#D61A3C]" />
+                  <Store className="w-6 h-6 text-[#1B7A2B]" />
                 </div>
                 <div>
                   <p className="font-bold text-gray-900 md:text-lg">Store Pickup</p>
-                  <p className="text-xs md:text-sm text-gray-500 mt-0.5">Ordering from home, I'll pick up • No shipping fee</p>
+                  <p className="text-xs md:text-sm text-gray-500 mt-0.5">Pick up at 10-34 Malkapur X Road, Sangareddy</p>
                 </div>
               </button>
               <button onClick={() => handleDeliveryChoice('direct')}
                 className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-[#FFC107] hover:bg-[#FFF8E1] transition-all text-left group">
                 <div className="w-12 h-12 bg-[#FFF8E1] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Store className="w-6 h-6 text-[#D61A3C]" />
+                  <Store className="w-6 h-6 text-[#1B7A2B]" />
                 </div>
                 <div>
                   <p className="font-bold text-gray-900 md:text-lg">Direct Order</p>
-                  <p className="text-xs md:text-sm text-gray-500 mt-0.5">Ordering from shop, picking up now • No shipping fee</p>
+                  <p className="text-xs md:text-sm text-gray-500 mt-0.5">Instant in-store pickup • No shipping fee</p>
                 </div>
               </button>
             </div>
@@ -437,7 +445,7 @@ export function CartPage() {
             <p className="text-sm text-gray-500 leading-relaxed">
               {vacation.message || 'We are temporarily not accepting orders. Please check back soon!'}
             </p>
-            <button onClick={() => setShowVacationModal(false)} className="w-full bg-[#D61A3C] hover:bg-[#b51430] text-white font-bold py-3 rounded-2xl transition-colors">
+            <button onClick={() => setShowVacationModal(false)} className="w-full bg-[#1B7A2B] hover:bg-[#156321] text-white font-bold py-3 rounded-2xl transition-colors">
               Got it
             </button>
           </div>

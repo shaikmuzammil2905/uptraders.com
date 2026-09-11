@@ -186,20 +186,16 @@ function DesktopFullHeader({ cartCount, wishlistCount, token, user, handleLogout
 
           {/* Left: Logo & Location */}
           <div className="flex items-center gap-3 shrink-0">
-            <Link to="/" className="flex items-center gap-2.5 hover:opacity-95 transition-opacity">
-              <img src={logo} alt="UP Traders" className="h-11 md:h-12 w-auto object-contain shrink-0" />
-              <div className="flex flex-col text-left">
-                <span className="font-serif font-bold text-lg lg:text-xl leading-none tracking-[0.04em] text-brand-red whitespace-nowrap block">UP TRADERS</span>
-                <span className="text-gray-800 text-[8px] lg:text-[8.5px] tracking-[0.12em] mt-0.5 uppercase font-bold block whitespace-nowrap">COMPLETE GROCERY STORE</span>
-              </div>
+            <Link to="/" className="flex items-center hover:opacity-95 transition-opacity">
+              <img src={logo} alt="UP Traders" className="h-10 md:h-11 w-auto object-contain shrink-0" />
             </Link>
 
             {/* Desktop Deliver To */}
-            <div className="hidden xl:flex items-center gap-1 cursor-pointer hover:bg-black/5 rounded-lg transition-colors py-1 px-2 border border-black/10 ml-1" onClick={fetchLocation}>
+            <div className="hidden xl:flex items-center gap-1 cursor-pointer hover:bg-black/5 rounded-lg transition-colors py-1 px-2.5 border border-black/10 ml-1" onClick={fetchLocation}>
               <MapPin className="w-3.5 h-3.5 text-gray-800 shrink-0" />
               <div className="flex flex-col text-left">
                 <span className="text-gray-800 text-[9px] font-semibold leading-none">Deliver to:</span>
-                <span className="text-gray-900 text-[10.5px] font-bold max-w-[100px] truncate leading-tight">{isLoadingLocation ? 'Fetching...' : locationName}</span>
+                <span className="text-gray-900 text-[10.5px] font-bold max-w-[120px] truncate leading-tight">{isLoadingLocation ? 'Fetching...' : (locationName || 'Sangareddy - 502001')}</span>
               </div>
               <ChevronDown className="w-3 h-3 text-gray-900 shrink-0 ml-0.5" />
             </div>
@@ -402,10 +398,6 @@ export function Header({ variant = 'default', title, showShare = false }) {
                 <div className="h-12 w-auto shrink-0 flex items-center justify-center">
                   <img src={logo} alt="UP Traders" className="h-full w-auto object-contain" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="font-serif font-bold text-lg leading-none text-brand-red">UP TRADERS</span>
-                  <span className="text-gray-900 text-[8px] tracking-wider mt-0.5">COMPLETE GROCERY STORE</span>
-                </div>
               </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}
@@ -584,18 +576,17 @@ export function Header({ variant = 'default', title, showShare = false }) {
                   <button onClick={() => setMobileMenuOpen(true)} className="p-1 -ml-2 rounded-full hover:bg-white/20 transition-colors z-10">
                     <Menu className="w-6 h-6 text-brand-red" strokeWidth={1.5} />
                   </button>
-                  <Link to="/" className="flex flex-col text-left">
-                    <span className="font-serif font-bold text-xl leading-none text-brand-red truncate pr-2">UP TRADERS</span>
-                    <span className="text-brand-red/90 text-[8px] tracking-[0.15em] mt-1 uppercase font-bold pl-0.5">GROCERY STORE</span>
+                  <Link to="/" className="flex items-center">
+                    <img src={logo} alt="UP Traders" className="h-8 w-auto object-contain" />
                   </Link>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="relative bg-white rounded-full p-2.5 text-brand-red flex-shrink-0 cursor-pointer hover:scale-105 transition-transform shadow-sm">
-                    <Bell className="w-4 h-4 md:w-5 md:h-5" />
+                  <div className="relative bg-white rounded-full p-2 text-brand-red flex-shrink-0 cursor-pointer hover:scale-105 transition-transform shadow-xs">
+                    <Bell className="w-4 h-4" />
                     <span className="absolute top-1 right-1.5 w-2 h-2 bg-brand-red rounded-full border-2 border-white"></span>
                   </div>
-                  <Link to="/cart" className="relative bg-white rounded-full p-2.5 text-brand-red flex-shrink-0 cursor-pointer hover:scale-105 transition-transform shadow-sm">
-                    <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
+                  <Link to="/cart" className="relative bg-white rounded-full p-2 text-brand-red flex-shrink-0 cursor-pointer hover:scale-105 transition-transform shadow-xs">
+                    <ShoppingCart className="w-4 h-4" />
                     {cartCount > 0 && (
                       <span className="absolute -top-1 -right-1 bg-brand-red text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border-2 border-white">
                         {cartCount}
@@ -609,7 +600,7 @@ export function Header({ variant = 'default', title, showShare = false }) {
                   Deliver to <ChevronDown className="w-3 h-3" />
                 </div>
                 <div className="flex items-center gap-1 text-gray-900 text-sm font-bold truncate">
-                  {isLoadingLocation ? 'Fetching location...' : locationName}
+                  {isLoadingLocation ? 'Fetching location...' : (locationName || 'Sangareddy - 502001')}
                 </div>
               </div>
               <form 
@@ -617,17 +608,16 @@ export function Header({ variant = 'default', title, showShare = false }) {
                   e.preventDefault();
                   if (mobileSearchQ.trim()) navigate(`/search?q=${encodeURIComponent(mobileSearchQ.trim())}`);
                 }}
-                className="w-full bg-white rounded-xl h-12 flex items-center px-4 gap-3 shadow-sm mt-1"
+                className="w-full bg-white rounded-xl h-11 flex items-center px-4 gap-3 shadow-xs mt-1"
               >
-                <Search className="w-5 h-5 text-brand-red" />
+                <Search className="w-4 h-4 text-brand-red" />
                 <input 
                   type="text" 
                   value={mobileSearchQ}
                   onChange={(e) => setMobileSearchQ(e.target.value)}
-                  placeholder="Search for products..."
-                  className="text-gray-900 text-sm flex-grow bg-transparent outline-none w-full"
+                  placeholder="Search products, categories..."
+                  className="text-gray-900 text-sm flex-grow bg-transparent outline-none w-full placeholder-gray-400"
                 />
-                <Mic className="w-5 h-5 text-brand-red cursor-pointer" />
               </form>
             </div>
           ) : (
@@ -637,19 +627,18 @@ export function Header({ variant = 'default', title, showShare = false }) {
                 <button onClick={() => setMobileMenuOpen(true)} className="p-1 -ml-2 rounded-full hover:bg-white/20 transition-colors z-10">
                   <Menu className="w-6 h-6 text-brand-red" strokeWidth={1.5} />
                 </button>
-                <Link to="/" className="flex flex-col text-left">
-                  <span className="font-serif font-bold text-lg leading-none text-brand-red truncate pr-2">UP TRADERS</span>
-                  <span className="text-brand-red/90 text-[7.5px] tracking-[0.15em] mt-1 uppercase font-bold pl-0.5">GROCERY STORE</span>
+                <Link to="/" className="flex items-center">
+                  <img src={logo} alt="UP Traders" className="h-8 w-auto object-contain" />
                 </Link>
               </div>
 
               {/* Right: Bell + Cart */}
               <div className="flex items-center gap-2 z-10">
-                <div className="relative bg-white rounded-full p-2.5 text-brand-red flex-shrink-0 cursor-pointer hover:scale-105 transition-transform shadow-sm">
+                <div className="relative bg-white rounded-full p-2 text-brand-red flex-shrink-0 cursor-pointer hover:scale-105 transition-transform shadow-xs">
                   <Bell className="w-4 h-4" />
                   <span className="absolute top-1 right-1.5 w-2 h-2 bg-brand-red rounded-full border-2 border-white"></span>
                 </div>
-                <Link to="/cart" className="relative bg-white rounded-full p-2.5 text-brand-red flex-shrink-0 cursor-pointer hover:scale-105 transition-transform shadow-sm">
+                <Link to="/cart" className="relative bg-white rounded-full p-2 text-brand-red flex-shrink-0 cursor-pointer hover:scale-105 transition-transform shadow-xs">
                   <ShoppingCart className="w-4 h-4" />
                   {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-brand-red text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border-2 border-white">

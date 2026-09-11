@@ -626,7 +626,7 @@ export function ProductDetailPage() {
                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                         : addedFeedback
                         ? 'bg-green-600 text-white'
-                        : 'bg-[#D61A3C] text-white hover:bg-[#b81633] shadow-lg shadow-[#D61A3C]/20 active:scale-[0.98]'
+                        : 'bg-[#1B7A2B] text-white hover:bg-[#156321] shadow-lg shadow-[#1B7A2B]/20 active:scale-[0.98]'
                     }`}
                   >
                     <ShoppingCart className="w-5 h-5" />
@@ -639,7 +639,7 @@ export function ProductDetailPage() {
                     className={`px-6 py-3.5 rounded-2xl font-bold text-base border-2 transition-all ${
                       isOutOfStock
                         ? 'border-gray-200 text-gray-300 cursor-not-allowed'
-                        : 'border-[#D61A3C] text-[#D61A3C] hover:bg-red-50 active:scale-[0.98]'
+                        : 'border-[#1B7A2B] text-[#1B7A2B] hover:bg-green-50 active:scale-[0.98]'
                     }`}
                   >
                     Buy Now
@@ -647,7 +647,7 @@ export function ProductDetailPage() {
 
                   <button
                     onClick={handleWhatsAppOrder}
-                    className="px-6 py-3.5 rounded-2xl font-bold text-base bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg transition-all active:scale-[0.98] flex items-center gap-2"
+                    className="px-6 py-3.5 rounded-2xl font-bold text-base bg-amber-500 hover:bg-amber-600 text-white shadow-lg transition-all active:scale-[0.98] flex items-center gap-2"
                   >
                     Order via WhatsApp
                   </button>
@@ -835,14 +835,18 @@ export function ProductDetailPage() {
 
       {/* ── Mobile Sticky Bottom Bar ── */}
       <div className="fixed bottom-0 left-0 w-full z-[60] md:hidden">
-        <div className="bg-white border-t border-gray-100 px-4 py-3 flex items-center gap-3 shadow-2xl">
-          <button onClick={() => toggleWishlist(product.id)} className="w-14 h-14 rounded-2xl border-2 border-gray-200 flex items-center justify-center flex-shrink-0">
-            <Heart className={`w-6 h-6 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+        <div className="bg-white border-t border-gray-100 px-3 py-2.5 flex items-center gap-2 shadow-2xl">
+          <button onClick={() => toggleWishlist(product.id)} className="w-12 h-12 rounded-xl border-2 border-gray-200 flex items-center justify-center flex-shrink-0">
+            <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
           </button>
           <button onClick={handleAddToCart} disabled={isOutOfStock}
-            className={`flex-1 flex items-center justify-center gap-2 font-bold py-4 rounded-2xl text-base transition-all active:scale-95 ${isOutOfStock ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : addedFeedback ? 'bg-green-500 text-white' : 'bg-[#D61A3C] text-white shadow-lg shadow-[#D61A3C]/30'}`}>
-            <ShoppingCart className="w-5 h-5" />
-            {isOutOfStock ? 'Out of Stock' : addedFeedback ? '✓ Added to Cart!' : 'Add to Cart'}
+            className={`flex-1 flex items-center justify-center gap-1.5 font-bold py-3 rounded-xl text-xs sm:text-sm transition-all active:scale-95 ${isOutOfStock ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : addedFeedback ? 'bg-green-600 text-white' : 'bg-[#1B7A2B] text-white shadow-md shadow-[#1B7A2B]/20'}`}>
+            <ShoppingCart className="w-4 h-4" />
+            {isOutOfStock ? 'Out of Stock' : addedFeedback ? '✓ Added' : 'Add to Cart'}
+          </button>
+          <button onClick={handleWhatsAppOrder}
+            className="px-3 py-3 rounded-xl font-bold text-xs bg-amber-500 text-white shadow-md transition-all active:scale-95 flex items-center gap-1 shrink-0">
+            <span>WhatsApp</span>
           </button>
         </div>
       </div>

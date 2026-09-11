@@ -2,19 +2,19 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-red: #1E8233;
-  --color-brand-red-dark: #156323;
-  --color-brand-green: #1E8233;
-  --color-brand-green-dark: #156323;
+  --color-brand-red: #1B7A2B;
+  --color-brand-red-dark: #156321;
+  --color-brand-green: #1B7A2B;
+  --color-brand-green-dark: #156321;
   --color-brand-yellow: #FFC107;
   --color-brand-orange: #FF9800;
-  --color-brand-bg: #F9FAFB;
-  --color-brand-text: #333333;
+  --color-brand-bg: #FDF8F0;
+  --color-brand-text: #222222;
   
-  /* Retained for fallback during transition */
-  --color-brand-dark-blue: #08183A;
-  --color-brand-gold: #D4AF37;
-  --color-brand-maroon: #2D1A10;
+  /* UP Traders brand palette */
+  --color-brand-dark-blue: #156321;
+  --color-brand-gold: #FFC107;
+  --color-brand-maroon: #1B7A2B;
   --color-brand-beige: #FDF8F0;
   --color-brand-beige-darker: #F4EBE0;
   --color-brand-cream: #FDFBF7;
