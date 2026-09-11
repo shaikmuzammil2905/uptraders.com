@@ -54,6 +54,7 @@ import { BulkOrdersPage } from './pages/BulkOrdersPage';
 import { FunctionOrdersPage } from './pages/FunctionOrdersPage';
 import { AdminBulkOrdersPage } from './pages/admin/AdminBulkOrdersPage';
 import { AdminFunctionOrdersPage } from './pages/admin/AdminFunctionOrdersPage';
+import { ShopkeeperDashboardPage } from './pages/ShopkeeperDashboardPage';
 
 // ─── Trading Dashboard Imports ────────────────────────────────
 import { TradingLayout } from './components/trading/TradingLayout';
@@ -141,6 +142,8 @@ function App() {
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/bulk-orders" element={<BulkOrdersPage />} />
                   <Route path="/function-orders" element={<FunctionOrdersPage />} />
+                  <Route path="/shopkeeper/dashboard" element={<ShopkeeperDashboardPage />} />
+                  <Route path="/shopkeeper" element={<ShopkeeperDashboardPage />} />
                   <Route path="/category/:categoryId" element={<CategoryListingPage />} />
                   <Route path="/offer/:id" element={<OfferPage />} />
                   <Route path="/product/:id" element={<ProductDetailPage />} />

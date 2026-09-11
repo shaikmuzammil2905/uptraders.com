@@ -4,7 +4,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   Menu, Search, Heart, ShoppingCart, ArrowLeft, Share2,
   User, LogIn, Package, MapPin, LayoutDashboard, LogOut,
-  Settings, Shield, ChevronDown, X, Ticket, Bell, Mic, Wallet
+  Settings, Shield, ChevronDown, X, Ticket, Bell, Mic, Wallet, Store
 } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore';
@@ -30,6 +30,7 @@ function AvatarDropdown({ user, onLogout }) {
 
   const items = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: Store, label: 'Shopkeeper B2B Portal', path: '/shopkeeper/dashboard' },
     { icon: Package, label: 'My Orders', path: '/my-orders' },
     { icon: Wallet, label: 'My Wallet', path: '/my-wallet' },
     { icon: Ticket, label: 'My Coupons', path: '/my-coupons' },
@@ -230,6 +231,10 @@ function DesktopFullHeader({ cartCount, wishlistCount, token, user, handleLogout
               Bulk Orders
             </Link>
 
+            <Link to="/shopkeeper/dashboard" className="text-xs xl:text-sm font-bold text-[#156321] hover:text-[#1B7A2B] transition-colors whitespace-nowrap px-2.5 py-1.5 rounded-lg bg-emerald-50/80 hover:bg-emerald-100 border border-emerald-200/60 flex items-center gap-1">
+              <Store className="w-3.5 h-3.5 text-[#1B7A2B]" /> Shopkeeper B2B
+            </Link>
+
             <Link to="/function-orders" className="text-xs xl:text-sm font-semibold text-gray-800 hover:text-brand-red transition-colors whitespace-nowrap px-2 py-1.5 rounded-lg hover:bg-white/40">
               Function Orders
             </Link>
@@ -353,6 +358,7 @@ export function Header({ variant = 'default', title, showShare = false }) {
 
   const navLinks = [
     { label: 'Home', to: '/' },
+    { label: 'Shopkeeper B2B Portal', to: '/shopkeeper/dashboard' },
     { label: 'Categories', to: '#' },
     { label: 'Bulk Orders', to: '/bulk-orders' },
     { label: 'Function Orders', to: '/function-orders' },

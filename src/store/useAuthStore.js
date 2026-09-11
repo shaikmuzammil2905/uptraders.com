@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import api from '../utils/api';
 import { useCartStore } from './useCartStore';
 import { useWishlistStore } from './useWishlistStore';
-import { DEMO_CREDENTIALS } from '../data/demoUser';
+import { DEMO_CREDENTIALS, demoShopkeeperOrders } from '../data/demoUser';
 
 // Decode JWT and check expiry without any library
 function isTokenExpired(token) {
@@ -48,47 +48,61 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  verifyPhoneOtp: async (email, otp) => {
-    set({ loading: true, error: null });
-    try {
-      const { data } = await api.post('/auth/verify-phone-otp', { email, otp });
-      set({ loading: false });
-      return { success: true };
-    } catch (err) {
-      const error = err.response?.data?.error || 'Phone OTP verification failed';
-      set({ loading: false, error });
-      return { success: false, error };
-    }
-  },
-
-  verifyOtp: async (email, otp) => {
-    set({ loading: true, error: null });
-    try {
-      const { data } = await api.post('/auth/verify-otp', { email, otp });
-      localStorage.setItem('token', data.token);
-      set({ token: data.token, user: data.user, loading: false });
-      return { success: true };
-    } catch (err) {
-      const error = err.response?.data?.error || 'OTP verification failed';
-      set({ loading: false, error });
-      return { success: false, error };
-    }
-  },
-
   login: async (email, password) => {
     set({ loading: true, error: null });
 
-    // Demo credentials fallback — works without backend
+    const cleanEmail = email.trim().toLowerCase();
+
+    // 1. Shopkeeper Demo Login
     if (
-      email.trim().toLowerCase() === DEMO_CREDENTIALS.email.toLowerCase() &&
-      password === DEMO_CREDENTIALS.password
+      cleanEmail === DEMO_CREDENTIALS.shopkeeper.email.toLowerCase() &&
+      password === DEMO_CREDENTIALS.shopkeeper.password
     ) {
-      const demoToken = 'demo-token-' + Date.now();
+      const demoToken = 'demo-token-shopkeeper-' + Date.now();
+      const shopkeeperData = {
+        id: 'sk-001',
+        name: DEMO_CREDENTIALS.shopkeeper.name,
+        email: DEMO_CREDENTIALS.shopkeeper.email,
+        phone: DEMO_CREDENTIALS.shopkeeper.phone,
+        role: 'shopkeeper',
+        businessName: DEMO_CREDENTIALS.shopkeeper.businessName,
+        gstin: DEMO_CREDENTIALS.shopkeeper.gstin,
+        location: DEMO_CREDENTIALS.shopkeeper.location
+      };
+      localStorage.setItem('token', demoToken);
+      set({ token: demoToken, user: shopkeeperData, orders: demoShopkeeperOrders, loading: false });
+      return { success: true, role: 'shopkeeper' };
+    }
+
+    // 2. Admin Demo Login
+    if (
+      cleanEmail === DEMO_CREDENTIALS.admin.email.toLowerCase() &&
+      password === DEMO_CREDENTIALS.admin.password
+    ) {
+      const demoToken = 'demo-token-admin-' + Date.now();
+      const adminData = {
+        id: 'admin-001',
+        name: DEMO_CREDENTIALS.admin.name,
+        email: DEMO_CREDENTIALS.admin.email,
+        phone: '8886000847',
+        role: 'admin',
+      };
+      localStorage.setItem('token', demoToken);
+      set({ token: demoToken, user: adminData, loading: false });
+      return { success: true, role: 'admin' };
+    }
+
+    // 3. Customer Demo Login
+    if (
+      cleanEmail === DEMO_CREDENTIALS.customer.email.toLowerCase() &&
+      password === DEMO_CREDENTIALS.customer.password
+    ) {
+      const demoToken = 'demo-token-customer-' + Date.now();
       const demoUserData = {
         id: 'demo-001',
-        name: 'Demo User',
-        email: DEMO_CREDENTIALS.email,
-        phone: '+91 98765 43210',
+        name: 'Demo Customer',
+        email: DEMO_CREDENTIALS.customer.email,
+        phone: '+91 88860 00847',
         role: 'customer',
       };
       localStorage.setItem('token', demoToken);
@@ -102,7 +116,7 @@ export const useAuthStore = create((set, get) => ({
       set({ token: data.token, user: data.user, loading: false });
       return { success: true, role: data.user.role };
     } catch (err) {
-      const error = err.response?.data?.error || 'Login failed';
+      const error = err.response?.data?.error || 'Invalid credentials or login failed';
       set({ loading: false, error });
       return { success: false, error };
     }
@@ -124,26 +138,54 @@ export const useAuthStore = create((set, get) => ({
 
   fetchProfile: async () => {
     if (!get().token) return;
-    // Re-check token expiry before making the call
     if (isTokenExpired(get().token)) {
       localStorage.removeItem('token');
       set({ user: null, token: null, addresses: [], orders: [] });
       return;
     }
-    // Demo session — no backend call needed
+    // Demo session handling
     if (get().token.startsWith('demo-token-')) {
       if (!get().user) {
-        set({
-          user: {
-            id: 'demo-001',
-            name: 'Demo User',
-            email: DEMO_CREDENTIALS.email,
-            phone: '+91 98765 43210',
-            role: 'customer',
-          },
-          addresses: [],
-          orders: [],
-        });
+        if (get().token.includes('shopkeeper')) {
+          set({
+            user: {
+              id: 'sk-001',
+              name: DEMO_CREDENTIALS.shopkeeper.name,
+              email: DEMO_CREDENTIALS.shopkeeper.email,
+              phone: DEMO_CREDENTIALS.shopkeeper.phone,
+              role: 'shopkeeper',
+              businessName: DEMO_CREDENTIALS.shopkeeper.businessName,
+              gstin: DEMO_CREDENTIALS.shopkeeper.gstin,
+              location: DEMO_CREDENTIALS.shopkeeper.location
+            },
+            orders: demoShopkeeperOrders,
+            addresses: []
+          });
+        } else if (get().token.includes('admin')) {
+          set({
+            user: {
+              id: 'admin-001',
+              name: DEMO_CREDENTIALS.admin.name,
+              email: DEMO_CREDENTIALS.admin.email,
+              phone: '8886000847',
+              role: 'admin',
+            },
+            addresses: [],
+            orders: []
+          });
+        } else {
+          set({
+            user: {
+              id: 'demo-001',
+              name: 'Demo Customer',
+              email: DEMO_CREDENTIALS.customer.email,
+              phone: '+91 88860 00847',
+              role: 'customer',
+            },
+            addresses: [],
+            orders: [],
+          });
+        }
       }
       return;
     }
@@ -153,7 +195,6 @@ export const useAuthStore = create((set, get) => ({
       set({ user: data.user, addresses: data.addresses, orders: data.orders, loading: false });
     } catch (err) {
       set({ loading: false });
-      // 401 = token expired or invalid on server side
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
         set({ user: null, token: null, addresses: [], orders: [] });
@@ -172,41 +213,6 @@ export const useAuthStore = create((set, get) => ({
       set({ loading: false, error });
       return { success: false, error };
     }
-  },
-
-  addAddress: async (addressData) => {
-    try {
-      const { data } = await api.post('/auth/address', addressData);
-      set((state) => ({
-        addresses: addressData.is_default
-          ? [...state.addresses.map(a => ({ ...a, is_default: false })), data.address]
-          : [...state.addresses, data.address]
-      }));
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: err.response?.data?.error || 'Failed to add address' };
-    }
-  },
-
-  updateAddress: async (id, addressData) => {
-    try {
-      const { data } = await api.put(`/auth/address/${id}`, addressData);
-      set((state) => ({
-        addresses: state.addresses.map(a =>
-          addressData.is_default ? { ...a, is_default: a.id === id ? true : false } : a.id === id ? data.address : a
-        ).map(a => a.id === id ? data.address : a)
-      }));
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: err.response?.data?.error || 'Failed to update address' };
-    }
-  },
-
-  deleteAddress: async (id) => {
-    try {
-      await api.delete(`/auth/address/${id}`);
-      set((state) => ({ addresses: state.addresses.filter((a) => a.id !== id) }));
-    } catch {}
   },
 
   logout: () => {
