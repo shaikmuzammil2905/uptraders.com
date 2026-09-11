@@ -56,7 +56,7 @@ export const useAuthStore = create((set, get) => ({
     // 1. Shopkeeper Demo Login
     if (
       cleanEmail === DEMO_CREDENTIALS.shopkeeper.email.toLowerCase() &&
-      password === DEMO_CREDENTIALS.shopkeeper.password
+      (password.trim() === DEMO_CREDENTIALS.shopkeeper.password || password.trim().toLowerCase() === 'shopkeeper@123')
     ) {
       const demoToken = 'demo-token-shopkeeper-' + Date.now();
       const shopkeeperData = {
@@ -70,6 +70,7 @@ export const useAuthStore = create((set, get) => ({
         location: DEMO_CREDENTIALS.shopkeeper.location
       };
       localStorage.setItem('token', demoToken);
+      localStorage.setItem('upt_user_role', 'shopkeeper');
       set({ token: demoToken, user: shopkeeperData, orders: demoShopkeeperOrders, loading: false });
       return { success: true, role: 'shopkeeper' };
     }
@@ -77,7 +78,7 @@ export const useAuthStore = create((set, get) => ({
     // 2. Admin Demo Login
     if (
       cleanEmail === DEMO_CREDENTIALS.admin.email.toLowerCase() &&
-      password === DEMO_CREDENTIALS.admin.password
+      (password.trim() === DEMO_CREDENTIALS.admin.password || password.trim().toLowerCase() === 'admin@123')
     ) {
       const demoToken = 'demo-token-admin-' + Date.now();
       const adminData = {
@@ -88,6 +89,7 @@ export const useAuthStore = create((set, get) => ({
         role: 'admin',
       };
       localStorage.setItem('token', demoToken);
+      localStorage.setItem('upt_user_role', 'admin');
       set({ token: demoToken, user: adminData, loading: false });
       return { success: true, role: 'admin' };
     }
@@ -95,7 +97,7 @@ export const useAuthStore = create((set, get) => ({
     // 3. Customer Demo Login
     if (
       cleanEmail === DEMO_CREDENTIALS.customer.email.toLowerCase() &&
-      password === DEMO_CREDENTIALS.customer.password
+      (password.trim() === DEMO_CREDENTIALS.customer.password || password.trim().toLowerCase() === 'demo@123')
     ) {
       const demoToken = 'demo-token-customer-' + Date.now();
       const demoUserData = {
@@ -106,6 +108,7 @@ export const useAuthStore = create((set, get) => ({
         role: 'customer',
       };
       localStorage.setItem('token', demoToken);
+      localStorage.setItem('upt_user_role', 'customer');
       set({ token: demoToken, user: demoUserData, loading: false });
       return { success: true, role: 'customer' };
     }

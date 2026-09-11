@@ -1,110 +1,152 @@
 import React, { useEffect, useState } from "react";
-import { ShoppingBag, Users, TrendingUp, MessageCircle, Package, Clock } from "lucide-react";
+import { ShoppingBag, Users, TrendingUp, MessageCircle, Package, Clock, ShieldCheck, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api";
-const WA_NUMBER = "919505550051";
+const WA_NUMBER = "918886000847";
+
+const INITIAL_DEMO_ORDERS = [
+  { id: "1082", address: { name: "Sri Sai Kirana Mart (Praveen)", phone: "8886000847" }, total: 29220, status: "delivered", items: [{ name: "Sona Masoori 25kg", qty: 10 }, { name: "Sunflower Oil 15L", qty: 4 }] },
+  { id: "1079", address: { name: "Rajesh Kumar (Malkapur X Road)", phone: "9848011223" }, total: 1840, status: "paid", items: [{ name: "Basmati Rice 5kg", qty: 1 }, { name: "Desi Ghee 1L", qty: 1 }] },
+  { id: "1075", address: { name: "Lakshmi Kirana & General Store", phone: "9440123456" }, total: 14500, status: "processing", items: [{ name: "Sugar 50kg Bag", qty: 3 }, { name: "Toor Dal 30kg", qty: 1 }] },
+  { id: "1071", address: { name: "Venkatesh Rao", phone: "9988776655" }, total: 950, status: "shipped", items: [{ name: "Refined Sunflower Oil 1L", qty: 3 }, { name: "Wheat Atta 5kg", qty: 1 }] }
+];
 
 export function AdminDashboardPage() {
-  const [orders, setOrders] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [productsCount, setProductsCount] = useState(0);
+  const [orders, setOrders] = useState(INITIAL_DEMO_ORDERS);
+  const [usersCount, setUsersCount] = useState(148);
+  const [productsCount, setProductsCount] = useState(42);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
     const h = { Authorization: `Bearer ${token}` };
     Promise.all([
-      fetch(`${BACKEND_URL}/admin/orders`, { headers: h }).then((r) => r.json()),
-      fetch(`${BACKEND_URL}/admin/users`, { headers: h }).then((r) => r.json()),
-      fetch(`${BACKEND_URL}/admin/products`, { headers: h }).then((r) => r.json()),
+      fetch(`${BACKEND_URL}/admin/orders`, { headers: h }).then((r) => r.json()).catch(() => null),
+      fetch(`${BACKEND_URL}/admin/users`, { headers: h }).then((r) => r.json()).catch(() => null),
+      fetch(`${BACKEND_URL}/admin/products`, { headers: h }).then((r) => r.json()).catch(() => null),
     ]).then(([od, ud, pd]) => {
-      if (od.orders) setOrders(od.orders);
-      if (ud.users) setUsers(ud.users);
-      if (pd.products) setProductsCount(pd.products.length);
+      if (od && od.orders && od.orders.length > 0) setOrders(od.orders);
+      if (ud && ud.users) setUsersCount(ud.users.length);
+      if (pd && pd.products) setProductsCount(pd.products.length);
     }).catch(() => {});
   }, []);
 
-  const revenue = orders.filter((o) => o.status !== "cancelled").reduce((s, o) => s + Number(o.total), 0);
+  const revenue = orders.filter((o) => o.status !== "cancelled").reduce((s, o) => s + Number(o.total || 0), 0);
   const pending = orders.filter((o) => o.status === "paid" || o.status === "processing" || o.status === "pending").length;
 
   const stats = [
-    { label: "Total Orders", value: orders.length, icon: <ShoppingBag className="w-6 h-6" />, color: "bg-red-100 text-red-600" },
-    { label: "Total Revenue", value: `₹${revenue.toLocaleString()}`, icon: <TrendingUp className="w-6 h-6" />, color: "bg-green-100 text-green-600" },
-    { label: "Customers", value: users.length, icon: <Users className="w-6 h-6" />, color: "bg-blue-100 text-blue-600" },
-    { label: "Pending Orders", value: pending, icon: <Clock className="w-6 h-6" />, color: "bg-orange-100 text-orange-600" },
-    { label: "Products", value: productsCount, icon: <Package className="w-6 h-6" />, color: "bg-purple-100 text-purple-600" },
+    { label: "Total Orders", value: orders.length, icon: <ShoppingBag className="w-5 h-5" />, color: "bg-emerald-50 text-[#1B7A2B]" },
+    { label: "Total Revenue", value: `₹${revenue.toLocaleString('en-IN')}`, icon: <TrendingUp className="w-5 h-5" />, color: "bg-amber-50 text-amber-600" },
+    { label: "Active Customers", value: usersCount, icon: <Users className="w-5 h-5" />, color: "bg-blue-50 text-blue-600" },
+    { label: "Pending Processing", value: pending, icon: <Clock className="w-5 h-5" />, color: "bg-orange-50 text-orange-600" },
+    { label: "Active Products", value: productsCount, icon: <Package className="w-5 h-5" />, color: "bg-purple-50 text-purple-600" },
   ];
 
   const notifyWhatsApp = (order) => {
     const phone = order.address?.phone || order.address?.mobile || WA_NUMBER;
     const items = (order.items || []).map((i) => `${i.qty}x ${i.name}`).join(", ");
-    const msg = encodeURIComponent(`Hi ${order.address?.name || "Customer"}! 🙏 Your order #${order.id} (${items}) is being prepared and will be delivered soon. Thank you for ordering!`);
+    const msg = encodeURIComponent(`Hi ${order.address?.name || "Customer"}! 🙏 Greetings from UP Traders Sangareddy. Your grocery order #UPT-${order.id} (${items}) is confirmed and being prepared for delivery. Contact: 8886000847.`);
     window.open(`https://wa.me/${phone.replace(/\D/g, "")}?text=${msg}`, "_blank");
   };
 
   return (
-    <div>
-      <h1 className="font-serif text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Admin Dashboard</h1>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">UP Traders Admin Dashboard</h1>
+            <span className="bg-emerald-100 text-[#1B7A2B] text-xs font-black px-2.5 py-0.5 rounded-full uppercase tracking-wide">
+              Store Control
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Store management, orders dispatch, commodities inventory & customer support • Sangareddy, Telangana
+          </p>
+        </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="flex items-center gap-2">
+          <a
+            href={`https://wa.me/${WA_NUMBER}`}
+            target="_blank"
+            rel="noreferrer"
+            className="bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
+          >
+            <MessageCircle className="w-4 h-4" /> Store WhatsApp Support
+          </a>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {stats.map((s, i) => (
-          <motion.div key={s.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-            className="bg-white rounded-xl sm:rounded-2xl border border-brand-red/10 p-3 sm:p-4 flex flex-col gap-2 sm:gap-3">
-            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center ${s.color}`}>{s.icon}</div>
-            <div>
-              <p className="text-lg sm:text-xl font-serif font-bold text-gray-900">{s.value}</p>
-              <p className="text-gray-900/50 text-[10px] sm:text-xs font-sans">{s.label}</p>
+          <motion.div
+            key={s.label}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+            className="bg-white rounded-2xl border border-gray-200/90 p-4 flex flex-col justify-between shadow-xs hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider">{s.label}</span>
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${s.color}`}>
+                {s.icon}
+              </div>
             </div>
+            <p className="text-xl sm:text-2xl font-black text-gray-900 mt-3">{s.value}</p>
           </motion.div>
         ))}
       </div>
 
-      {/* Recent Orders with WhatsApp Notify */}
-      <div className="bg-white rounded-xl sm:rounded-2xl border border-brand-red/10 p-3 sm:p-6">
-        <h2 className="font-serif text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">Recent Orders</h2>
-        {orders.length === 0 ? (
-          <p className="text-gray-900/50 font-sans text-sm text-center py-8">No orders yet.</p>
-        ) : (
-          <div className="overflow-x-auto -mx-3 sm:mx-0">
-            <div className="inline-block min-w-full align-middle px-3 sm:px-0">
-              <table className="w-full text-sm font-sans min-w-[480px]">
-                <thead>
-                  <tr className="text-gray-900/50 text-[10px] sm:text-xs uppercase tracking-wider border-b border-brand-red/5">
-                    <th className="text-left py-3 pr-2 sm:pr-4">Order</th>
-                    <th className="text-left py-3 pr-2 sm:pr-4">Customer</th>
-                    <th className="text-left py-3 pr-2 sm:pr-4">Total</th>
-                    <th className="text-left py-3 pr-2 sm:pr-4">Status</th>
-                    <th className="text-left py-3">Notify</th>
+      {/* Recent Orders Table */}
+      <div className="bg-white rounded-2xl border border-gray-200/90 p-5 sm:p-6 shadow-xs">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base sm:text-lg font-bold text-gray-900">Recent Customer & B2B Orders</h2>
+          <span className="text-xs text-gray-400 font-semibold">{orders.length} orders recorded</span>
+        </div>
+
+        <div className="overflow-x-auto -mx-5 sm:mx-0">
+          <div className="inline-block min-w-full align-middle px-5 sm:px-0">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-gray-400 uppercase tracking-wider font-semibold border-b border-gray-100">
+                  <th className="text-left py-3 pr-4">Order ID</th>
+                  <th className="text-left py-3 pr-4">Customer / Kirana Partner</th>
+                  <th className="text-left py-3 pr-4">Amount</th>
+                  <th className="text-left py-3 pr-4">Status</th>
+                  <th className="text-right py-3">Quick Notify</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {orders.map((order) => (
+                  <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
+                    <td className="py-3 pr-4 font-bold text-gray-900">UPT-{order.id}</td>
+                    <td className="py-3 pr-4 text-gray-700 font-semibold">{order.address?.name || "Customer"}</td>
+                    <td className="py-3 pr-4 font-black text-[#1B7A2B]">₹{order.total?.toLocaleString('en-IN')}</td>
+                    <td className="py-3 pr-4">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        order.status === "delivered" ? "bg-emerald-100 text-emerald-800" :
+                        order.status === "paid" ? "bg-blue-100 text-blue-800" :
+                        order.status === "shipped" ? "bg-purple-100 text-purple-800" : "bg-amber-100 text-amber-800"
+                      }`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="py-3 text-right">
+                      <button
+                        onClick={() => notifyWhatsApp(order)}
+                        className="inline-flex items-center gap-1.5 text-xs bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 py-1 rounded-lg font-bold transition-all shadow-xs"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" /> WhatsApp Dispatch
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-[#08183A]/5">
-                  {orders.slice(0, 8).map((order) => (
-                    <tr key={order.id} className="hover:bg-[#FDF8F0]/30 transition-colors">
-                      <td className="py-3 pr-2 sm:pr-4 font-semibold text-gray-900 text-xs sm:text-sm">MSM - {order.id}</td>
-                      <td className="py-3 pr-2 sm:pr-4 text-gray-900/70 text-xs sm:text-sm truncate max-w-[100px] sm:max-w-none">{order.address?.name || "—"}</td>
-                      <td className="py-3 pr-2 sm:pr-4 font-serif font-bold text-brand-orange text-xs sm:text-sm">₹{order.total}</td>
-                      <td className="py-3 pr-2 sm:pr-4">
-                        <span className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold ${
-                          order.status === "delivered" ? "bg-green-100 text-green-700" :
-                          order.status === "paid" ? "bg-blue-100 text-blue-700" :
-                          order.status === "shipped" ? "bg-purple-100 text-purple-700" : "bg-orange-100 text-orange-700"
-                        }`}>{order.status}</span>
-                      </td>
-                      <td className="py-3">
-                        <button onClick={() => notifyWhatsApp(order)}
-                          className="flex items-center gap-1 text-[10px] sm:text-[11px] bg-green-500 hover:bg-green-600 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold transition-colors whitespace-nowrap">
-                          <MessageCircle className="w-3 h-3" /> <span className="hidden sm:inline">WhatsApp</span><span className="sm:hidden">WA</span>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
