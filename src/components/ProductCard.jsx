@@ -75,9 +75,6 @@ export function ProductCard({ product, layout = 'grid', searchQuery = '' }) {
   const originalPrice = Number(defaultSize.mrp) || Number(defaultSize.our_price) || 0;
   
   let basePrice = Number(defaultSize.our_price) || originalPrice;
-  if (user?.role === 'shopkeeper' && defaultSize.shopkeeper_price) {
-    basePrice = Number(defaultSize.shopkeeper_price);
-  }
   
   let displayPrice = basePrice;
 

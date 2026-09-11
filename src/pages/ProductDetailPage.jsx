@@ -92,9 +92,6 @@ export function ProductDetailPage() {
 
   const currentMrp = selectedSize ? Number(selectedSize.mrp || selectedSize.price || selectedSize.our_price || 0) : 0;
   let currentOurPrice = selectedSize ? Number(selectedSize.our_price || selectedSize.price || currentMrp) : 0;
-  if (user?.role === 'shopkeeper' && selectedSize?.shopkeeper_price) {
-    currentOurPrice = Number(selectedSize.shopkeeper_price);
-  }
   const displayPrice = getDisplayPrice(currentOurPrice);
   const discount = currentMrp > displayPrice ? Math.round(((currentMrp - displayPrice) / currentMrp) * 100) : 0;
 
@@ -121,9 +118,6 @@ export function ProductDetailPage() {
   const confirmAddToCart = async (qty) => {
     const sizeToUse = selectedSize || { size: 'Standard', price: currentOurPrice };
     let basePriceToUse = Number(sizeToUse.our_price || sizeToUse.price || sizeToUse.mrp || 0);
-    if (user?.role === 'shopkeeper' && sizeToUse?.shopkeeper_price) {
-      basePriceToUse = Number(sizeToUse.shopkeeper_price);
-    }
     const priceToUse = getDisplayPrice(basePriceToUse);
 
     const colorToUse = selectedVariantColor || product.color || '';

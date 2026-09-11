@@ -42,9 +42,6 @@ function getProductPrice(product, user) {
     .flatMap((variant) => parseList(variant?.sizes));
   const size = directSizes[0] || variantSizes[0];
 
-  if (user?.role === 'shopkeeper' && size?.shopkeeper_price) {
-    return Number(size.shopkeeper_price);
-  }
   return Number(size?.our_price || size?.price || size?.mrp || 0);
 }
 

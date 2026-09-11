@@ -7,6 +7,7 @@ import {
   Building2, Hash, ArrowUpRight, MessageCircle
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
+import { useStoreData } from '../store/useStoreData';
 import { demoShopkeeperOrders } from '../data/demoUser';
 import logoImg from '../assets/up-traders-logo.png';
 
@@ -128,6 +129,7 @@ const WHOLESALE_RATE_CARD = [
 
 export function ShopkeeperDashboardPage() {
   const { user } = useAuthStore();
+  const { products } = useStoreData();
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'rateCard' | 'quickOrder' | 'profile'
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchRate, setSearchRate] = useState('');
@@ -147,7 +149,53 @@ export function ShopkeeperDashboardPage() {
     location: 'Shop #4, Market Yard Road, Sangareddy - 502001'
   };
 
-  const filteredRates = WHOLESALE_RATE_CARD.filter(item => {
+  const dynamicRateCard = [];
+  products.forEach(product => {
+    let variants = product.variants;
+    if (typeof variants === 'string') { try { variants = JSON.parse(variants); } catch { variants = []; } }
+    if (!Array.isArray(variants)) variants = [];
+    
+    let sizes = product.sizes;
+    if (typeof sizes === 'string') { try { sizes = JSON.parse(sizes); } catch { sizes = []; } }
+    if (!Array.isArray(sizes)) sizes = [];
+    
+    let allSizes = [];
+    if (sizes.length > 0) allSizes = sizes;
+    else if (variants.length > 0) {
+      variants.forEach(v => {
+        let vSizes = v.sizes;
+        if (typeof vSizes === 'string') { try { vSizes = JSON.parse(vSizes); } catch { vSizes = []; } }
+        if (Array.isArray(vSizes)) allSizes = [...allSizes, ...vSizes];
+      });
+    }
+
+    allSizes.forEach((sz, idx) => {
+      const sp = Number(sz.shopkeeper_price);
+      if (sp > 0) {
+        const mrp = Number(sz.mrp || sz.price || sz.our_price || sp);
+        const marginPct = mrp > sp ? ((mrp - sp) / mrp * 100).toFixed(1) + '%' : '0%';
+        const stockNum = Number(sz.stock || product.stock || 0);
+        
+        dynamicRateCard.push({
+          id: `${product.id}-${idx}`,
+          category: product.category || 'all',
+          name: `${product.name} (${sz.size})`,
+          brand: 'UP Traders Wholesale',
+          mrp: mrp,
+          wholesalePrice: sp,
+          margin: marginPct,
+          minOrderQty: '1 Unit',
+          stock: stockNum > 0 ? `In Stock (${stockNum})` : 'Out of Stock',
+          gst: 'Standard',
+          badge: 'Wholesale'
+        });
+      }
+    });
+  });
+
+  const activeRateCard = dynamicRateCard.length > 0 ? dynamicRateCard : WHOLESALE_RATE_CARD;
+
+  const filteredRates = activeRateCard.filter(item => {
     const matchCat = selectedCategory === 'all' || item.category === selectedCategory;
     const matchSearch = item.name.toLowerCase().includes(searchRate.toLowerCase()) ||
                         item.brand.toLowerCase().includes(searchRate.toLowerCase());
@@ -554,7 +602,7 @@ export function ShopkeeperDashboardPage() {
                         }}
                         className="flex-1 bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs text-gray-800 focus:outline-none focus:border-[#1B7A2B]"
                       >
-                        {WHOLESALE_RATE_CARD.map(r => (
+                        {activeRateCard.map(r => (
                           <option key={r.id} value={r.name}>{r.name} (₹{r.wholesalePrice})</option>
                         ))}
                       </select>
@@ -585,7 +633,7 @@ export function ShopkeeperDashboardPage() {
 
                 <button
                   type="button"
-                  onClick={() => setQuickItems([...quickItems, { item: WHOLESALE_RATE_CARD[0].name, qty: 1 }])}
+                  onClick={() => setQuickItems([...quickItems, { item: activeRateCard[0]?.name || '', qty: 1 }])}
                   className="mt-2 text-xs font-bold text-[#1B7A2B] hover:underline flex items-center gap-1"
                 >
                   + Add Another Commodity
